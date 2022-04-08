@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
+import { styled } from "@mui/system";
 import { alpha } from "@mui/material";
-import { FC } from "react";
+import { FC, useState } from "react";
 import Button from "../../components/Button";
 import Header from "../../components/Header/index";
 import Profile from "../../components/Profile/index";
@@ -112,13 +112,66 @@ const Input = styled("input")(({ theme }) => ({
   borderRadius: "5px",
 }));
 
+const TextArea = styled("textarea")(({ theme }) => ({
+  fontSize: "20px",
+  fontWeight: "400",
+  //@ts-ignore
+  color: theme.palette.text.primary,
+  margin: "5px 0px",
+  marginTop: "0px",
+  padding: "9px 18px",
+  width: "100%",
+  //@ts-ignore
+  backgroundColor: theme.palette.background.default,
+  //@ts-ignore
+  border: "solid 3px " + alpha(theme.palette.text.primary, 0.5),
+  borderRadius: "5px",
+  overflowY: "auto",
+  resize: "vertical",
+  minHeight: "100px",
+
+  "::-webkit-scrollbar": {
+    width: "5px",
+    //@ts-ignore
+    background: alpha(theme.palette.primary.main, 0.1),
+  },
+
+  "::-webkit-scrollbar-thumb": {
+    borderRadius: "5px",
+    //@ts-ignore
+    background: theme.palette.primary.main,
+  },
+}));
+
+const CommentBody = styled("div")(({ theme }) => ({
+  padding: "5px 10px",
+  margin: "7px 0px",
+  marginBottom: "15px",
+  border: "solid 3px " + alpha(theme.palette.text.primary, 0.5),
+  borderRadius: "9px",
+}));
+
+const CommentText = styled("div")(({ theme }) => ({
+  fontSize: "20px",
+  fontWeight: "500",
+  textAlign: "left",
+  wordBreak: "break-all",
+}));
+
+const CommentUser = styled("div")(({ theme }) => ({
+  fontSize: "15px",
+  fontWeight: "500",
+  textAlign: "right",
+}));
+
 const PostDetail: FC = () => {
+  const [commentStatus, setCommentStatus] = useState(false);
   return (
     <Body>
       <Header />
       <MainContainer>
         <MainDiv>
-          <Heading style={{ fontWeight: "800" }}>PostId#103</Heading>
+          <Heading style={{ fontWeight: "800" }}>PostId #103</Heading>
           <PostContent
             src={
               "https://ipfs.infura.io/ipfs/QmdMZKc5DdWjprh5FgQL8wHha3Rea1UHGCUf8n6EiiPtq5"
@@ -239,6 +292,56 @@ const PostDetail: FC = () => {
             style={{ marginTop: "10px" }}
           />
           <Button style={{ marginTop: "25px" }}>Bid</Button>
+          <div style={{ display: "flex", alignItems: "center" }}>
+            <Heading
+              style={{
+                marginTop: "10px",
+                textAlign: "left",
+                marginBottom: "0px",
+              }}
+            >
+              Comments :
+            </Heading>
+            <Heading
+              style={{
+                marginTop: "10px",
+                textAlign: "left",
+                marginBottom: "0px",
+                marginLeft: "auto",
+                cursor: "pointer",
+                fontSize: "30px",
+              }}
+              onClick={() => {
+                setCommentStatus(!commentStatus);
+              }}
+            >
+              {commentStatus ? "-" : "+"}
+            </Heading>
+          </div>
+          {commentStatus ? (
+            <>
+              <TextArea
+                placeholder="Enter your comment..."
+                style={{ marginTop: "10px" }}
+              />
+              <Button style={{ marginTop: "15px" }}>Comment</Button>
+            </>
+          ) : null}
+
+          <CommentBody>
+            <CommentText>I'm a huge fan of your work.</CommentText>
+            <CommentUser>~ijlalishaq</CommentUser>
+          </CommentBody>
+
+          <CommentBody>
+            <CommentText>I like your art.</CommentText>
+            <CommentUser>~ijlalishaq</CommentUser>
+          </CommentBody>
+
+          <CommentBody>
+            <CommentText>keep up the good work.</CommentText>
+            <CommentUser>~ijlalishaq</CommentUser>
+          </CommentBody>
         </MainDiv>
       </MainContainer>
     </Body>
