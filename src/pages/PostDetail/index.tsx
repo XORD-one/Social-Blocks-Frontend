@@ -80,6 +80,7 @@ const InfoContainer = styled("div")(({ theme }) => ({
   width: "100%",
   //@ts-ignore
   border: "solid 3px " + alpha(theme.palette.text.primary, 0.5),
+  backgroundColor: theme.palette.background.paper,
   borderRadius: "8px",
   margin: "20px 0px",
   padding: "8px",
@@ -106,7 +107,7 @@ const Input = styled("input")(({ theme }) => ({
   padding: "9px 18px",
   width: "100%",
   //@ts-ignore
-  backgroundColor: theme.palette.background.default,
+  backgroundColor: theme.palette.background.paper,
   //@ts-ignore
   border: "solid 3px " + alpha(theme.palette.text.primary, 0.5),
   borderRadius: "5px",
@@ -122,7 +123,7 @@ const TextArea = styled("textarea")(({ theme }) => ({
   padding: "9px 18px",
   width: "100%",
   //@ts-ignore
-  backgroundColor: theme.palette.background.default,
+  backgroundColor: theme.palette.background.paper,
   //@ts-ignore
   border: "solid 3px " + alpha(theme.palette.text.primary, 0.5),
   borderRadius: "5px",
@@ -148,6 +149,7 @@ const CommentBody = styled("div")(({ theme }) => ({
   margin: "7px 0px",
   marginBottom: "15px",
   border: "solid 3px " + alpha(theme.palette.text.primary, 0.5),
+  backgroundColor: theme.palette.background.paper,
   borderRadius: "9px",
 }));
 

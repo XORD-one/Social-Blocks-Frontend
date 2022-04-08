@@ -91,6 +91,7 @@ const Bio = styled("div")(({ theme }) => ({
 const InfoContainer = styled("div")(({ theme }) => ({
   width: "100%",
   border: "solid 3px " + alpha(theme.palette.text.primary, 0.5),
+  backgroundColor: theme.palette.background.paper,
   borderRadius: "8px",
   margin: "20px 0px",
   padding: "8px",
@@ -110,6 +111,7 @@ const InfoTab = styled("div")(({ theme }) => ({
 const PostTypeContainer = styled("div")(({ theme }) => ({
   width: "100%",
   border: "solid 3px " + alpha(theme.palette.text.primary, 0.5),
+  backgroundColor: theme.palette.background.paper,
   borderRadius: "8px",
   margin: "20px 0px",
   display: "flex",
