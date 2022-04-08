@@ -128,9 +128,7 @@ const PostTypeTab = styled("div")<{ active?: boolean }>(
     width: "calc(50% - 4px)",
     padding: "10px 0px",
     borderRadius: "5px",
-    color: active
-      ? theme.palette.background.default
-      : theme.palette.text.primary,
+    color: active ? theme.palette.background.paper : theme.palette.text.primary,
     backgroundColor: active ? alpha(theme.palette.text.primary, 0.5) : "none",
     cursor: "pointer",
   })
