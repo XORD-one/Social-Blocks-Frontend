@@ -1,0 +1,13 @@
+GET https://thawing-wave-35720.herokuapp.com/api/user/fuzzy-search?term=hell
+
+###
+
+GET https://rocky-peak-62606.herokuapp.com/posts/getPosts
+
+###
+POST https://rocky-peak-62606.herokuapp.com/posts/getUserPosts
+Content-Type: application/json
+
+{
+    "address": "0x5acca90b4e5cf2d283cd0b5bff9dc1cea51e0bf0"
+}
