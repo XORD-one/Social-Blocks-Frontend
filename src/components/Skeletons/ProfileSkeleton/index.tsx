@@ -24,15 +24,6 @@ const PostHeader = styled("div")(({ theme }) => ({
   alignItems: "center",
 }));
 
-const PostBottom = styled("div")(({ theme }) => ({
-  width: "100%",
-  height: "fit-content",
-  display: "flex",
-  padding: "11px 15px",
-  paddingTop: "3px",
-  alignItems: "center",
-}));
-
 type Props = any;
 
 const Index: React.FC<Props> = () => {

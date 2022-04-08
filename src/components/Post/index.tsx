@@ -81,6 +81,7 @@ const PostContent = styled("img")(({ theme }) => ({
   boxShadow: "0 0 1rem 0 " + alpha("#000", 0.2),
   borderTop: "solid 3px " + alpha(theme.palette.text.primary, 0.5),
   borderBottom: "solid 3px " + alpha(theme.palette.text.primary, 0.5),
+  cursor: "pointer",
 }));
 
 const PostBottom = styled("div")(({ theme }) => ({
@@ -203,16 +204,13 @@ const Post: React.FC<Props> = (props) => {
             width: "40px",
             cursor: "pointer",
           }}
+          onClick={() => navigate(`/post/${props.post._id}`)}
         />
       </PostHeader>
       <div style={{ position: "relative" }}>
         <PostContent
           src={props.post.image}
-          onClick={() =>
-            navigate(`/post/${props.post._id}`, {
-              state: { post: props.post },
-            })
-          }
+          onClick={() => navigate(`/post/${props.post._id}`)}
         />
         {props.post.owner.id !== props.post.creator.id ? (
           <div
@@ -285,9 +283,13 @@ const Post: React.FC<Props> = (props) => {
         )}
         <PostLikeCount>{postLikes}</PostLikeCount>
         {props.post.sellValue === 0 ? (
-          <PostBuy>NFS</PostBuy>
+          <PostBuy onClick={() => navigate(`/post/${props.post._id}`)}>
+            NFS
+          </PostBuy>
         ) : (
-          <PostBuy>{props.post.sellValue / 10 ** 18}$</PostBuy>
+          <PostBuy onClick={() => navigate(`/post/${props.post._id}`)}>
+            {props.post.sellValue / 10 ** 18}$
+          </PostBuy>
         )}
         &nbsp; &nbsp;
         <ReplyIcon
@@ -297,6 +299,7 @@ const Post: React.FC<Props> = (props) => {
             transform: "rotateY(180deg)",
             cursor: "pointer",
           }}
+          onClick={() => navigate(`/post/${props.post._id}`)}
         />
       </PostBottom>
       <PostDescription

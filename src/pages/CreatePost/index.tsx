@@ -201,8 +201,6 @@ const Index: FC = () => {
         };
         let URI = await ipfs.add(JSON.stringify(URI_Obj));
 
-        console.log("https://ipfs.infura.io/ipfs/" + URI.cid.toString());
-
         await createPost(
           status,
           price,

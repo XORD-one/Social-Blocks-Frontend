@@ -113,7 +113,6 @@ const Index: FC = () => {
     const client = create(options); //create("https://ipfs.infura.io:5001/api/v0");
     const added = await client.add(selectedFile);
     const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-    console.log("url", url);
     return url;
   };
 
@@ -121,7 +120,6 @@ const Index: FC = () => {
     setLoading(true);
     try {
       const image = await uploadToIPFS();
-      console.log(userName, displayName, bio, image);
       await createAccount(
         [userName, displayName, bio, image],
         walletAddress!,

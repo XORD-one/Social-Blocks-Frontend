@@ -106,6 +106,7 @@ const InfoTab = styled("div")(({ theme }) => ({
   fontWeight: "800",
   width: "100px",
   margin: "10px 0px",
+  cursor: "pointer",
 }));
 
 const PostTypeContainer = styled("div")(({ theme }) => ({
@@ -176,7 +177,6 @@ export default function LetterAvatars() {
     const result = await axios.get(
       "https://rocky-peak-62606.herokuapp.com/users/details?address=" + address
     );
-    console.log("user res1 = ", result.data);
     setUser(result.data);
     setTimeout(() => {
       setCreatedPostsLoading(false);
@@ -198,7 +198,7 @@ export default function LetterAvatars() {
   useEffect(() => {
     let count = 0;
     createdPosts.forEach((e) => {
-      count += e?.likes?.length;
+      count += e?.likesArray?.length;
     });
     setLikes(count);
   }, [createdPosts]);
@@ -218,11 +218,6 @@ export default function LetterAvatars() {
               style={{
                 backgroundImage: `url(${user?.image})`,
               }}
-              onClick={() => {
-                if (user?.id?.toLowerCase() === account?.toLowerCase()) {
-                  setEditModalStatus(true);
-                }
-              }}
             />
             <Heading>{user?.displayName}</Heading>
             <SubHeading>@{user?.userName}</SubHeading>
@@ -231,7 +226,7 @@ export default function LetterAvatars() {
               style={{ marginBottom: "0px", marginTop: "30px" }}
               onClick={() => {
                 if (user?.address?.toLowerCase() === account?.toLowerCase()) {
-                  //goto edit profile page
+                  setEditModalStatus(true);
                 } else {
                   follow();
                 }
@@ -330,7 +325,17 @@ export default function LetterAvatars() {
         handleClose={() => {
           setEditModalStatus(false);
         }}
-      ></CustomModal>
+      >
+        <EditModal
+          image={user?.image}
+          username={user?.userName}
+          displayName={user?.displayName}
+          bio={user?.bio}
+          handleClose={() => {
+            setEditModalStatus(false);
+          }}
+        />
+      </CustomModal>
     </Body>
   );
 }

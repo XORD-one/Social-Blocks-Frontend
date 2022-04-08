@@ -1,9 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { styled } from "@mui/system";
 import { alpha } from "@mui/material";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import Button from "../../components/Button";
 import Header from "../../components/Header/index";
 import Profile from "../../components/Profile/index";
+import axios from "axios";
+import PostDetailsSkeleton from "../../components/Skeletons/PostDetailsSkeleton/index";
 
 const Body = styled("div")(({ theme }) => ({
   width: "100vw",
@@ -168,133 +171,72 @@ const CommentUser = styled("div")(({ theme }) => ({
 
 const PostDetail: FC = () => {
   const [commentStatus, setCommentStatus] = useState(false);
+  const [postId, setPostId] = useState("");
+  const [postDetails, setPostDetails] = useState<any>(null);
+
+  const getPostDetails = async () => {
+    if (postId !== "") {
+      const result = await axios.get(
+        "https://rocky-peak-62606.herokuapp.com/posts/getSinglePost/" + postId
+      );
+      setPostDetails(result?.data);
+    }
+  };
+
+  useEffect(() => {
+    setPostId(window.location.href.split("/")[4]);
+  }, []);
+
+  useEffect(() => {
+    getPostDetails();
+  }, [postId]);
+
   return (
     <Body>
       <Header />
       <MainContainer>
-        <MainDiv>
-          <Heading style={{ fontWeight: "800" }}>PostId #103</Heading>
-          <PostContent
-            src={
-              "https://ipfs.infura.io/ipfs/QmdMZKc5DdWjprh5FgQL8wHha3Rea1UHGCUf8n6EiiPtq5"
-            }
-          />
-          <Heading style={{ marginTop: "10px" }}>"Title of the post."</Heading>
-          <Heading style={{ fontSize: "15px" }}>
-            "Description of the post. Passionate about capturing all of life's
-            important occasions."
-          </Heading>
-          <InfoContainer>
-            <InfoTab>
-              <div>{"100K"}</div>
-              <div style={{ fontSize: "15px", fontWeight: "500" }}>Likes</div>
-            </InfoTab>
-            <InfoTab>
-              <div>{"500"}</div>
-              <div style={{ fontSize: "15px", fontWeight: "500" }}>
-                Comments
-              </div>
-            </InfoTab>
-            <InfoTab>
-              <div>{"100$"}</div>
-              <div style={{ fontSize: "15px", fontWeight: "500" }}>Value</div>
-            </InfoTab>
-          </InfoContainer>
-          <Heading style={{ marginTop: "10px", textAlign: "left" }}>
-            Creator :
-          </Heading>
-          <Profile
-            userName={"ijlalishaq"}
-            displayName={"Ijlal Ishaq"}
-            image={
-              "https://ipfs.infura.io/ipfs/QmdMZKc5DdWjprh5FgQL8wHha3Rea1UHGCUf8n6EiiPtq5"
-            }
-            address={"0x23e05938b4619035870836D22C4Ef9988623c384"}
-          />
-          <Heading style={{ marginTop: "10px", textAlign: "left" }}>
-            Owner :
-          </Heading>
-          <Profile
-            userName={"ijlalishaq"}
-            displayName={"Ijlal Ishaq"}
-            image={
-              "https://ipfs.infura.io/ipfs/QmdMZKc5DdWjprh5FgQL8wHha3Rea1UHGCUf8n6EiiPtq5"
-            }
-            address={"0x23e05938b4619035870836D22C4Ef9988623c384"}
-          />
-          <Heading
-            style={{
-              marginTop: "10px",
-              textAlign: "left",
-              marginBottom: "0px",
-            }}
-          >
-            Status :
-          </Heading>
-          <Heading
-            style={{
-              textAlign: "left",
-              fontSize: "40px",
-              marginTop: "0px",
-              fontWeight: "400",
-            }}
-          >
-            &#8226; Biddable
-          </Heading>
-          <Heading
-            style={{
-              marginTop: "10px",
-              textAlign: "left",
-              marginBottom: "0px",
-            }}
-          >
-            Bidding Ends :
-          </Heading>
-          <Heading
-            style={{
-              textAlign: "left",
-              fontSize: "40px",
-              marginTop: "0px",
-              fontWeight: "400",
-            }}
-          >
-            &#8226; 12th April 2022
-          </Heading>
-          <Heading
-            style={{
-              marginTop: "10px",
-              textAlign: "left",
-              marginBottom: "0px",
-            }}
-          >
-            Last Bid :
-          </Heading>
-          <Heading
-            style={{
-              textAlign: "left",
-              fontSize: "40px",
-              marginTop: "0px",
-              fontWeight: "400",
-            }}
-          >
-            &#8226; 100 $
-          </Heading>
-          <Heading
-            style={{
-              marginTop: "10px",
-              textAlign: "left",
-              marginBottom: "0px",
-            }}
-          >
-            Your Bid:
-          </Heading>
-          <Input
-            placeholder="Enter amount"
-            type={"number"}
-            style={{ marginTop: "10px" }}
-          />
-          <Button style={{ marginTop: "25px" }}>Bid</Button>
-          <div style={{ display: "flex", alignItems: "center" }}>
+        {postDetails ? (
+          <MainDiv>
+            <Heading style={{ fontWeight: "800" }}>PostId #{postId}</Heading>
+            <PostContent src={postDetails?.image} />
+            <Heading style={{ marginTop: "10px" }}>{postDetails?.name}</Heading>
+            <Heading style={{ fontSize: "20px" }}>
+              "{postDetails?.description}"
+            </Heading>
+            <InfoContainer>
+              <InfoTab>
+                <div>{"100K"}</div>
+                <div style={{ fontSize: "15px", fontWeight: "500" }}>Likes</div>
+              </InfoTab>
+              <InfoTab>
+                <div>{"500"}</div>
+                <div style={{ fontSize: "15px", fontWeight: "500" }}>
+                  Comments
+                </div>
+              </InfoTab>
+              <InfoTab>
+                <div>{postDetails?.sellValue / 10 ** 18}$</div>
+                <div style={{ fontSize: "15px", fontWeight: "500" }}>Value</div>
+              </InfoTab>
+            </InfoContainer>
+            <Heading style={{ marginTop: "10px", textAlign: "left" }}>
+              Creator :
+            </Heading>
+            <Profile
+              userName={postDetails?.creator?.userName}
+              displayName={postDetails?.creator?.displayName}
+              image={postDetails?.creator?.image}
+              address={postDetails?.creator?.address}
+            />
+            <Heading style={{ marginTop: "10px", textAlign: "left" }}>
+              Owner :
+            </Heading>
+            <Profile
+              userName={postDetails?.owner?.userName}
+              displayName={postDetails?.owner?.displayName}
+              image={postDetails?.owner?.image}
+              address={postDetails?.owner?.address}
+            />
             <Heading
               style={{
                 marginTop: "10px",
@@ -302,49 +244,160 @@ const PostDetail: FC = () => {
                 marginBottom: "0px",
               }}
             >
-              Comments :
+              Status :
             </Heading>
             <Heading
               style={{
-                marginTop: "10px",
                 textAlign: "left",
-                marginBottom: "0px",
-                marginLeft: "auto",
-                cursor: "pointer",
-                fontSize: "30px",
-              }}
-              onClick={() => {
-                setCommentStatus(!commentStatus);
+                fontSize: "40px",
+                marginTop: "0px",
+                fontWeight: "400",
               }}
             >
-              {commentStatus ? "-" : "+"}
+              &#8226;
+              {postDetails?.buyStatus === 0
+                ? "Buyable."
+                : postDetails?.buyStatus === 1
+                ? "Biddable."
+                : "Not for sale."}
             </Heading>
-          </div>
-          {commentStatus ? (
-            <>
-              <TextArea
-                placeholder="Enter your comment..."
-                style={{ marginTop: "10px" }}
-              />
-              <Button style={{ marginTop: "15px" }}>Comment</Button>
-            </>
-          ) : null}
 
-          <CommentBody>
-            <CommentText>I'm a huge fan of your work.</CommentText>
-            <CommentUser>~ijlalishaq</CommentUser>
-          </CommentBody>
+            {postDetails?.buyStatus === 0 ? (
+              <>
+                <Heading
+                  style={{
+                    marginTop: "10px",
+                    textAlign: "left",
+                    marginBottom: "0px",
+                  }}
+                >
+                  Value :
+                </Heading>
+                <Heading
+                  style={{
+                    textAlign: "left",
+                    fontSize: "40px",
+                    marginTop: "0px",
+                    fontWeight: "400",
+                  }}
+                >
+                  &#8226; {postDetails?.sellValue / 10 ** 18}$
+                </Heading>
+                <Button style={{ marginTop: "25px" }}>Buy</Button>
+              </>
+            ) : postDetails?.buyStatus === 1 ? (
+              <>
+                <Heading
+                  style={{
+                    marginTop: "10px",
+                    textAlign: "left",
+                    marginBottom: "0px",
+                  }}
+                >
+                  Bidding Ends :
+                </Heading>
+                <Heading
+                  style={{
+                    textAlign: "left",
+                    fontSize: "40px",
+                    marginTop: "0px",
+                    fontWeight: "400",
+                  }}
+                >
+                  &#8226; 12th April 2022
+                </Heading>
+                <Heading
+                  style={{
+                    marginTop: "10px",
+                    textAlign: "left",
+                    marginBottom: "0px",
+                  }}
+                >
+                  Last Bid :
+                </Heading>
+                <Heading
+                  style={{
+                    textAlign: "left",
+                    fontSize: "40px",
+                    marginTop: "0px",
+                    fontWeight: "400",
+                  }}
+                >
+                  &#8226; 100 $
+                </Heading>
+                <Heading
+                  style={{
+                    marginTop: "10px",
+                    textAlign: "left",
+                    marginBottom: "0px",
+                  }}
+                >
+                  Your Bid:
+                </Heading>
+                <Input
+                  placeholder="Enter amount"
+                  type={"number"}
+                  style={{ marginTop: "10px" }}
+                />
+                <Button style={{ marginTop: "25px" }}>Bid</Button>
+              </>
+            ) : null}
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Heading
+                style={{
+                  marginTop: "10px",
+                  textAlign: "left",
+                  marginBottom: "0px",
+                }}
+              >
+                Comments :
+              </Heading>
+              <Heading
+                style={{
+                  marginTop: "10px",
+                  textAlign: "left",
+                  marginBottom: "0px",
+                  marginLeft: "auto",
+                  cursor: "pointer",
+                  fontSize: "30px",
+                }}
+                onClick={() => {
+                  setCommentStatus(!commentStatus);
+                }}
+              >
+                {commentStatus ? "-" : "+"}
+              </Heading>
+            </div>
+            {commentStatus ? (
+              <>
+                <TextArea
+                  placeholder="Enter your comment..."
+                  style={{ marginTop: "10px" }}
+                />
+                <Button style={{ marginTop: "15px" }}>Comment</Button>
+              </>
+            ) : null}
 
-          <CommentBody>
-            <CommentText>I like your art.</CommentText>
-            <CommentUser>~ijlalishaq</CommentUser>
-          </CommentBody>
+            <CommentBody>
+              <CommentText>I'm a huge fan of your work.</CommentText>
+              <CommentUser>~ijlalishaq</CommentUser>
+            </CommentBody>
 
-          <CommentBody>
-            <CommentText>keep up the good work.</CommentText>
-            <CommentUser>~ijlalishaq</CommentUser>
-          </CommentBody>
-        </MainDiv>
+            <CommentBody>
+              <CommentText>I like your art.</CommentText>
+              <CommentUser>~ijlalishaq</CommentUser>
+            </CommentBody>
+
+            <CommentBody>
+              <CommentText>keep up the good work.</CommentText>
+              <CommentUser>~ijlalishaq</CommentUser>
+            </CommentBody>
+          </MainDiv>
+        ) : (
+          <MainDiv>
+            <PostDetailsSkeleton />
+          </MainDiv>
+        )}
       </MainContainer>
     </Body>
   );
