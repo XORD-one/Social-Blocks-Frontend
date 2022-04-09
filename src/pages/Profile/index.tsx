@@ -247,21 +247,19 @@ export default function LetterAvatars() {
                   Followers
                 </div>
               </InfoTab>
-              <InfoTab>
-                <div>{user?.following?.length}</div>
-                <div style={{ fontSize: "15px", fontWeight: "500" }}>
-                  Following
-                </div>
-              </InfoTab>
-
               {!isMobile ? (
                 <InfoTab>
-                  <div>{likes}</div>
+                  <div>{user?.following?.length}</div>
                   <div style={{ fontSize: "15px", fontWeight: "500" }}>
-                    Likes
+                    Following
                   </div>
                 </InfoTab>
               ) : null}
+
+              <InfoTab>
+                <div>{likes}</div>
+                <div style={{ fontSize: "15px", fontWeight: "500" }}>Likes</div>
+              </InfoTab>
             </InfoContainer>
           </>
         ) : (
