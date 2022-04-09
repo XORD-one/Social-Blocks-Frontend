@@ -168,7 +168,7 @@ const Post: React.FC<Props> = (props) => {
       return;
     }
 
-    await axios.post("https://rocky-peak-62606.herokuapp.com/likes/setLikes", {
+    await axios.post("https://calm-tor-92545.herokuapp.com/likes/setLikes", {
       postId: props.post._id,
       postUserAddress: props.post.owner.id,
       userAddress: walletAddress,

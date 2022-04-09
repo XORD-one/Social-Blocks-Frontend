@@ -188,13 +188,15 @@ const PostDetail: FC = () => {
   );
   const navigate = useNavigate();
   const { account } = useWeb3React();
+  const [likes, setLikes] = useState<any[]>([]);
 
   const getPostDetails = async () => {
     if (postId !== "") {
       const result = await axios.get(
-        "https://rocky-peak-62606.herokuapp.com/posts/getSinglePost/" + postId
+        "https://calm-tor-92545.herokuapp.com/posts/getSinglePost/" + postId
       );
-      setPostDetails(result?.data);
+      setPostDetails(result?.data?._doc);
+      setLikes(result?.data?.likesArray);
     }
   };
 
@@ -207,7 +209,7 @@ const PostDetail: FC = () => {
     if (commentText !== "") {
       setCommentingModalStatus(true);
       let result = await axios.post(
-        "https://rocky-peak-62606.herokuapp.com/comment/setcomment",
+        "https://calm-tor-92545.herokuapp.com/comment/setcomment",
         {
           postId: parseInt(postId),
           comment: commentText,
@@ -224,7 +226,7 @@ const PostDetail: FC = () => {
   const getComments = async () => {
     if (postId !== "") {
       const result = await axios.get(
-        "https://rocky-peak-62606.herokuapp.com/comment/getcomments/" + postId
+        "https://calm-tor-92545.herokuapp.com/comment/getcomments/" + postId
       );
       setComments(result?.data?.comments);
     }
@@ -253,9 +255,7 @@ const PostDetail: FC = () => {
             </Heading>
             <InfoContainer>
               <InfoTab>
-                <div>
-                  {postDetails?.likesArray ? postDetails.likesArray.length : 0}
-                </div>
+                <div>{likes.length}</div>
                 <div style={{ fontSize: "15px", fontWeight: "500" }}>Likes</div>
               </InfoTab>
               <InfoTab>

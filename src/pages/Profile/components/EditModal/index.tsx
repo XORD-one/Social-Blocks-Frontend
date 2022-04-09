@@ -190,6 +190,8 @@ const Index: FC<Prop> = (props) => {
       <Button onClick={updateUser}>Submit</Button>
       <CustomModal open={loading} handleClose={() => {}}>
         <Loader />
+        <br /> <br />
+        <Heading>Editing Profile...</Heading>
       </CustomModal>
     </Container>
   );
