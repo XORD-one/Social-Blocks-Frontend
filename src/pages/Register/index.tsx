@@ -166,6 +166,8 @@ const Index: FC = () => {
       <Button onClick={createUser}>Register</Button>
       <CustomModal open={loading} handleClose={() => {}}>
         <Loader />
+        <br /> <br />
+        <Heading>Registering...</Heading>
       </CustomModal>
     </MainDiv>
   );

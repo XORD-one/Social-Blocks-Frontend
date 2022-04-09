@@ -7,6 +7,11 @@ import Header from "../../components/Header/index";
 import Profile from "../../components/Profile/index";
 import axios from "axios";
 import PostDetailsSkeleton from "../../components/Skeletons/PostDetailsSkeleton/index";
+import { useAppSelector } from "../../hooks";
+import CustomModal from "../../components/CustomModal";
+import Loader from "../../components/Loader";
+import { useNavigate } from "react-router-dom";
+import { useWeb3React } from "@web3-react/core";
 
 const Body = styled("div")(({ theme }) => ({
   width: "100vw",
@@ -167,12 +172,22 @@ const CommentUser = styled("div")(({ theme }) => ({
   fontSize: "15px",
   fontWeight: "500",
   textAlign: "right",
+  cursor: "pointer",
 }));
 
 const PostDetail: FC = () => {
   const [commentStatus, setCommentStatus] = useState(false);
+  const [commentingModalStatus, setCommentingModalStatus] = useState(false);
   const [postId, setPostId] = useState("");
   const [postDetails, setPostDetails] = useState<any>(null);
+  const [comments, setComments] = useState<any[]>([]);
+  const [commentText, setCommentText] = useState<string>("");
+  const signature = useAppSelector((state) => state.userReducer.signature);
+  const walletAddress = useAppSelector(
+    (state) => state.userReducer.walletAddress
+  );
+  const navigate = useNavigate();
+  const { account } = useWeb3React();
 
   const getPostDetails = async () => {
     if (postId !== "") {
@@ -183,12 +198,45 @@ const PostDetail: FC = () => {
     }
   };
 
+  const setComment = async () => {
+    if (!account) {
+      navigate("/connect");
+      return;
+    }
+
+    if (commentText !== "") {
+      setCommentingModalStatus(true);
+      let result = await axios.post(
+        "https://rocky-peak-62606.herokuapp.com/comment/setcomment",
+        {
+          postId: parseInt(postId),
+          comment: commentText,
+          userAddress: walletAddress?.toLowerCase(),
+          signature,
+        }
+      );
+      setComments([...comments, result?.data?.comment]);
+      setCommentText("");
+      setCommentingModalStatus(false);
+    }
+  };
+
+  const getComments = async () => {
+    if (postId !== "") {
+      const result = await axios.get(
+        "https://rocky-peak-62606.herokuapp.com/comment/getcomments/" + postId
+      );
+      setComments(result?.data?.comments);
+    }
+  };
+
   useEffect(() => {
     setPostId(window.location.href.split("/")[4]);
   }, []);
 
   useEffect(() => {
     getPostDetails();
+    getComments();
   }, [postId]);
 
   return (
@@ -205,11 +253,13 @@ const PostDetail: FC = () => {
             </Heading>
             <InfoContainer>
               <InfoTab>
-                <div>{"100K"}</div>
+                <div>
+                  {postDetails?.likesArray ? postDetails.likesArray.length : 0}
+                </div>
                 <div style={{ fontSize: "15px", fontWeight: "500" }}>Likes</div>
               </InfoTab>
               <InfoTab>
-                <div>{"500"}</div>
+                <div>{comments.length}</div>
                 <div style={{ fontSize: "15px", fontWeight: "500" }}>
                   Comments
                 </div>
@@ -373,25 +423,55 @@ const PostDetail: FC = () => {
                 <TextArea
                   placeholder="Enter your comment..."
                   style={{ marginTop: "10px" }}
+                  value={commentText}
+                  onChange={(e) => {
+                    setCommentText(e.target.value);
+                  }}
                 />
-                <Button style={{ marginTop: "15px" }}>Comment</Button>
+                <Button
+                  style={{ marginTop: "15px" }}
+                  onClick={() => {
+                    setComment();
+                  }}
+                >
+                  Comment
+                </Button>
               </>
             ) : null}
 
-            <CommentBody>
-              <CommentText>I'm a huge fan of your work.</CommentText>
-              <CommentUser>~ijlalishaq</CommentUser>
-            </CommentBody>
+            {comments.length > 0 ? (
+              comments.map((comment, i) => {
+                return (
+                  <CommentBody key={i}>
+                    <CommentText>{comment.comment}</CommentText>
+                    <CommentUser
+                      onClick={() =>
+                        navigate(`/profile/${comment.userAddress}`)
+                      }
+                    >
+                      @{comment.userName}
+                    </CommentUser>
+                  </CommentBody>
+                );
+              })
+            ) : (
+              <Heading
+                style={{
+                  textAlign: "left",
+                  fontSize: "40px",
+                  marginTop: "0px",
+                  fontWeight: "400",
+                }}
+              >
+                &#8226; No Comments.
+              </Heading>
+            )}
 
-            <CommentBody>
-              <CommentText>I like your art.</CommentText>
-              <CommentUser>~ijlalishaq</CommentUser>
-            </CommentBody>
-
-            <CommentBody>
-              <CommentText>keep up the good work.</CommentText>
-              <CommentUser>~ijlalishaq</CommentUser>
-            </CommentBody>
+            <CustomModal open={commentingModalStatus} handleClose={() => {}}>
+              <Loader />
+              <br /> <br />
+              <Heading>Adding Comment...</Heading>
+            </CustomModal>
           </MainDiv>
         ) : (
           <MainDiv>
