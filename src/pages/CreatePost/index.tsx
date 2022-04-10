@@ -166,6 +166,7 @@ const Index: FC = () => {
   const [status, setStatus] = useState("2");
   const [price, setPrice] = useState("");
   const theme = useTheme();
+  const [bidDuration, setBidDuration] = useState<number>();
 
   const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStatus((event.target as HTMLInputElement).value);
@@ -204,6 +205,7 @@ const Index: FC = () => {
         await createPost(
           status,
           price,
+          bidDuration,
           "https://ipfs.infura.io/ipfs/" + URI.cid.toString(),
           walletAddress!,
           () => {
@@ -333,6 +335,14 @@ const Index: FC = () => {
               placeholder="Enter base price."
               value={price}
               onChange={(e) => setPrice(e.target.value)}
+              type="number"
+            />
+            <br />
+            <Label>Bidding Duration (days) :</Label>
+            <Input
+              placeholder="Bidding duration in days."
+              value={bidDuration ? bidDuration : 0}
+              onChange={(e) => setBidDuration(parseInt(e.target.value))}
               type="number"
             />
             <br />

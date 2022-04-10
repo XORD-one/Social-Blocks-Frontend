@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { styled } from "@mui/system";
 import { alpha } from "@mui/material";
@@ -12,6 +13,9 @@ import CustomModal from "../../components/CustomModal";
 import Loader from "../../components/Loader";
 import { useNavigate } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
+import Web3 from "web3";
+import { CONTRACT_ADDRESS } from "../../contract/constants";
+import contractAbi from "../../contract/contractAbi.json";
 
 const Body = styled("div")(({ theme }) => ({
   width: "100vw",
@@ -188,12 +192,19 @@ const PostDetail: FC = () => {
   );
   const navigate = useNavigate();
   const { account } = useWeb3React();
+  const web3Context = useWeb3React();
+  const web3 = new Web3(
+    "https://rinkeby.infura.io/v3/7c4e9e4322bc446195e561d9ea27d827"
+  );
   const [likes, setLikes] = useState<any[]>([]);
+  const [biddingDate, setBiddingDate] = useState<string>("---");
+  const [biddingPrice, setBiddingPrice] = useState<any>("---");
+  const [biddingAddress, setBiddingAddress] = useState<string>("---");
 
   const getPostDetails = async () => {
     if (postId !== "") {
       const result = await axios.get(
-        "https://calm-tor-92545.herokuapp.com/posts/getSinglePost/" + postId
+        "https://socialblocks.herokuapp.com/posts/getSinglePost/" + postId
       );
       setPostDetails(result?.data?._doc);
       setLikes(result?.data?.likesArray);
@@ -209,7 +220,7 @@ const PostDetail: FC = () => {
     if (commentText !== "") {
       setCommentingModalStatus(true);
       let result = await axios.post(
-        "https://calm-tor-92545.herokuapp.com/comment/setcomment",
+        "https://socialblocks.herokuapp.com/comment/setcomment",
         {
           postId: parseInt(postId),
           comment: commentText,
@@ -226,10 +237,36 @@ const PostDetail: FC = () => {
   const getComments = async () => {
     if (postId !== "") {
       const result = await axios.get(
-        "https://calm-tor-92545.herokuapp.com/comment/getcomments/" + postId
+        "https://socialblocks.herokuapp.com/comment/getcomments/" + postId
       );
       setComments(result?.data?.comments);
     }
+  };
+
+  const getBiddingDetails = async () => {
+    const web3 = new Web3(
+      "https://rinkeby.infura.io/v3/7c4e9e4322bc446195e561d9ea27d827"
+    );
+    const contract = new web3.eth.Contract(
+      contractAbi as any,
+      CONTRACT_ADDRESS
+    );
+    const info = await contract.methods.getLastBidInfoById(postId).call();
+    let date = new Date(info[2] * 1000);
+    setBiddingDate(
+      date
+        .toDateString()
+        .split(" ")
+        .splice(1, 4)
+        .toString()
+        .replaceAll(",", " ")
+    );
+    if (info[1] == "0") {
+      setBiddingPrice(postDetails?.sellValue / 10 ** 18);
+    } else {
+      setBiddingPrice(info[1]);
+    }
+    setBiddingAddress(info[0]);
   };
 
   useEffect(() => {
@@ -240,6 +277,12 @@ const PostDetail: FC = () => {
     getPostDetails();
     getComments();
   }, [postId]);
+
+  useEffect(() => {
+    if (postDetails?.buyStatus === 1) {
+      getBiddingDetails();
+    }
+  }, [postDetails]);
 
   return (
     <Body>
@@ -354,7 +397,7 @@ const PostDetail: FC = () => {
                     fontWeight: "400",
                   }}
                 >
-                  &#8226; 12th April 2022
+                  &#8226; {biddingDate}
                 </Heading>
                 <Heading
                   style={{
@@ -373,7 +416,7 @@ const PostDetail: FC = () => {
                     fontWeight: "400",
                   }}
                 >
-                  &#8226; 100 $
+                  &#8226; {biddingPrice}$
                 </Heading>
                 <Heading
                   style={{

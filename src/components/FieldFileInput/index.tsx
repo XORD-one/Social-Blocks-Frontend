@@ -7,7 +7,7 @@ const ImportImage = styled("div")<{ withBorder: boolean; circleShape }>(
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    height: "fit-content",
+    height: circleShape ? "100%" : "fit-content",
     width: "100%",
     // @ts-ignore
     border: "solid 3px " + alpha(theme.palette.text.primary, 0.5),

@@ -75,7 +75,7 @@ export default function Home() {
   const getAllUsers = async () => {
     setLoading(true);
     await axios({
-      url: `https://calm-tor-92545.herokuapp.com/users/getAllUsers`,
+      url: `https://socialblocks.herokuapp.com/users/getAllUsers`,
       method: "get",
     }).then((response) => {
       if (response?.data) {

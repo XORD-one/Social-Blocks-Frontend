@@ -2,7 +2,7 @@
   {
     "inputs": [
       {
-        "internalType": "contract IMintable",
+        "internalType": "contract IERC20",
         "name": "_rewardToken",
         "type": "address"
       },
@@ -96,6 +96,56 @@
       }
     ],
     "name": "ApprovalForAll",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "bidder",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "postId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "bidAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "BidPlaced",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "oldOwner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "BiddableTokenPurchased",
     "type": "event"
   },
   {
@@ -199,6 +249,12 @@
         "internalType": "uint256",
         "name": "price",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "bidDuration",
+        "type": "uint256"
       }
     ],
     "name": "PostDetailsChanged",
@@ -227,6 +283,31 @@
       }
     ],
     "name": "PostRewardClaimed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "PostSold",
     "type": "event"
   },
   {
@@ -282,9 +363,40 @@
   },
   {
     "inputs": [
+      { "internalType": "uint256", "name": "_postId", "type": "uint256" },
+      { "internalType": "uint256", "name": "_price", "type": "uint256" }
+    ],
+    "name": "bid",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_postId", "type": "uint256" }
+    ],
+    "name": "buyPost",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
       { "internalType": "address", "name": "_admin", "type": "address" }
     ],
     "name": "changeAdminAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_postId", "type": "uint256" },
+      { "internalType": "uint8", "name": "_buyStatus", "type": "uint8" },
+      { "internalType": "uint256", "name": "_price", "type": "uint256" },
+      { "internalType": "uint256", "name": "_bidDuration", "type": "uint256" }
+    ],
+    "name": "changePostInfo",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -321,12 +433,21 @@
   {
     "inputs": [
       {
-        "internalType": "contract IMintable",
+        "internalType": "contract IERC20",
         "name": "_rewardToken",
         "type": "address"
       }
     ],
     "name": "changeRewardToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_postId", "type": "uint256" }
+    ],
+    "name": "claimBid",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -376,6 +497,53 @@
     "type": "function"
   },
   {
+    "inputs": [
+      { "internalType": "uint256", "name": "_postId", "type": "uint256" }
+    ],
+    "name": "getLastBidInfoById",
+    "outputs": [
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "uint256", "name": "", "type": "uint256" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_postId", "type": "uint256" }
+    ],
+    "name": "getOwnerById",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_postId", "type": "uint256" }
+    ],
+    "name": "getPostInfo",
+    "outputs": [
+      {
+        "components": [
+          { "internalType": "uint8", "name": "buyStatus", "type": "uint8" },
+          { "internalType": "uint256", "name": "sellValue", "type": "uint256" },
+          {
+            "internalType": "uint256",
+            "name": "bidDuration",
+            "type": "uint256"
+          },
+          { "internalType": "string", "name": "uri", "type": "string" }
+        ],
+        "internalType": "struct SocialBlocks.PostInfo",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "name": "idToLikes",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
@@ -421,6 +589,7 @@
     "inputs": [
       { "internalType": "uint8", "name": "_buyStatus", "type": "uint8" },
       { "internalType": "uint256", "name": "_sellValue", "type": "uint256" },
+      { "internalType": "uint256", "name": "_bidDuration", "type": "uint256" },
       { "internalType": "string", "name": "tokenURI_", "type": "string" }
     ],
     "name": "mint",
@@ -447,6 +616,13 @@
       { "internalType": "uint256", "name": "tokenId", "type": "uint256" }
     ],
     "name": "ownerOf",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "postLastBidder",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
@@ -593,6 +769,16 @@
     "name": "updateUserInfo",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "name": "userBid",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {

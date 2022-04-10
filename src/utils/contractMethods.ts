@@ -45,12 +45,24 @@ export const createAccount = async (
 export const createPost = async (
   status: string,
   price: string,
+  bidDuration: any,
   tokenURI: string,
   address: string,
   cb: () => void
 ) => {
+  var date = new Date();
+  date.setDate(date.getDate() + bidDuration);
+
+  console.log("aaa", Math.floor(date.getTime() / 1000).toString());
+  console.log("aaa", price);
+
   await contract.methods
-    .mint(status, Web3.utils.toWei(price), tokenURI)
+    .mint(
+      status,
+      Web3.utils.toWei(price),
+      Math.floor(date.getTime() / 1000).toString(),
+      tokenURI
+    )
     .send({
       from: address,
     })

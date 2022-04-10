@@ -66,7 +66,7 @@ const PostUsername = styled("div")(({ theme }) => ({
 
 const PostDescription = styled("div")(({ theme }) => ({
   fontSize: "20px",
-  fontWeight: "400",
+  fontWeight: "500",
   color: theme.palette.text.primary,
   textAlign: "left",
   margin: "0px 15px",
@@ -168,7 +168,7 @@ const Post: React.FC<Props> = (props) => {
       return;
     }
 
-    await axios.post("https://calm-tor-92545.herokuapp.com/likes/setLikes", {
+    await axios.post("https://socialblocks.herokuapp.com/likes/setLikes", {
       postId: props.post._id,
       postUserAddress: props.post.owner.id,
       userAddress: walletAddress,
@@ -312,7 +312,11 @@ const Post: React.FC<Props> = (props) => {
         {props.post.name}
       </PostDescription>
       <PostDescription
-        style={{ display: "flex", justifyContent: "space-between" }}
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          fontSize: "17px",
+        }}
       >
         {props.post.description}
       </PostDescription>

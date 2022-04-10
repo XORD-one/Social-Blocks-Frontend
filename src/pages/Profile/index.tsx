@@ -154,7 +154,7 @@ export default function LetterAvatars() {
 
   const getCreatedPosts = async () => {
     const result = await axios.get(
-      "https://calm-tor-92545.herokuapp.com/posts/getUserPosts?address=" +
+      "https://socialblocks.herokuapp.com/posts/getUserPosts?address=" +
         address +
         "&type=creator"
     );
@@ -163,7 +163,7 @@ export default function LetterAvatars() {
 
   const getOwnedPosts = async () => {
     const result = await axios.get(
-      "https://calm-tor-92545.herokuapp.com/posts/getUserPosts?address=" +
+      "https://socialblocks.herokuapp.com/posts/getUserPosts?address=" +
         address +
         "&type=owner"
     );
@@ -175,7 +175,7 @@ export default function LetterAvatars() {
 
   const getUserDetails = async () => {
     const result = await axios.get(
-      "https://calm-tor-92545.herokuapp.com/users/details?address=" + address
+      "https://socialblocks.herokuapp.com/users/details?address=" + address
     );
     setUser(result.data);
     setTimeout(() => {
