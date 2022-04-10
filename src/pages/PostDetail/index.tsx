@@ -197,6 +197,7 @@ const PostDetail: FC = () => {
     "https://rinkeby.infura.io/v3/7c4e9e4322bc446195e561d9ea27d827"
   );
   const [likes, setLikes] = useState<any[]>([]);
+  const [biddingTimestamp, setBiddingTimestamp] = useState<any>();
   const [biddingDate, setBiddingDate] = useState<string>("---");
   const [biddingPrice, setBiddingPrice] = useState<any>("---");
   const [biddingAddress, setBiddingAddress] = useState<string>("---");
@@ -253,20 +254,22 @@ const PostDetail: FC = () => {
     );
     const info = await contract.methods.getLastBidInfoById(postId).call();
     let date = new Date(info[2] * 1000);
-    setBiddingDate(
-      date
-        .toDateString()
-        .split(" ")
-        .splice(1, 4)
-        .toString()
-        .replaceAll(",", " ")
-    );
+    let dateArr = date.toDateString().split(" ");
+    setBiddingDate(dateArr[2] + " " + dateArr[1] + " " + dateArr[3]);
     if (info[1] == "0") {
       setBiddingPrice(postDetails?.sellValue / 10 ** 18);
     } else {
       setBiddingPrice(info[1]);
     }
+
+    if (parseInt(info[0]) > postDetails.sellValue) {
+      setPostDetails((state) => ({
+        ...state,
+        sellValue: info[0],
+      }));
+    }
     setBiddingAddress(info[0]);
+    setBiddingTimestamp(info[2]);
   };
 
   useEffect(() => {
@@ -355,86 +358,141 @@ const PostDetail: FC = () => {
                 : "Not for sale."}
             </Heading>
 
-            {postDetails?.buyStatus === 0 ? (
-              <>
-                <Heading
-                  style={{
-                    marginTop: "10px",
-                    textAlign: "left",
-                    marginBottom: "0px",
-                  }}
-                >
-                  Value :
-                </Heading>
-                <Heading
-                  style={{
-                    textAlign: "left",
-                    fontSize: "40px",
-                    marginTop: "0px",
-                    fontWeight: "400",
-                  }}
-                >
-                  &#8226; {postDetails?.sellValue / 10 ** 18}$
-                </Heading>
-                <Button style={{ marginTop: "25px" }}>Buy</Button>
-              </>
-            ) : postDetails?.buyStatus === 1 ? (
-              <>
-                <Heading
-                  style={{
-                    marginTop: "10px",
-                    textAlign: "left",
-                    marginBottom: "0px",
-                  }}
-                >
-                  Bidding Ends :
-                </Heading>
-                <Heading
-                  style={{
-                    textAlign: "left",
-                    fontSize: "40px",
-                    marginTop: "0px",
-                    fontWeight: "400",
-                  }}
-                >
-                  &#8226; {biddingDate}
-                </Heading>
-                <Heading
-                  style={{
-                    marginTop: "10px",
-                    textAlign: "left",
-                    marginBottom: "0px",
-                  }}
-                >
-                  Last Bid :
-                </Heading>
-                <Heading
-                  style={{
-                    textAlign: "left",
-                    fontSize: "40px",
-                    marginTop: "0px",
-                    fontWeight: "400",
-                  }}
-                >
-                  &#8226; {biddingPrice}$
-                </Heading>
-                <Heading
-                  style={{
-                    marginTop: "10px",
-                    textAlign: "left",
-                    marginBottom: "0px",
-                  }}
-                >
-                  Your Bid:
-                </Heading>
-                <Input
-                  placeholder="Enter amount"
-                  type={"number"}
-                  style={{ marginTop: "10px" }}
-                />
-                <Button style={{ marginTop: "25px" }}>Bid</Button>
-              </>
-            ) : null}
+            {
+              // buy status is buyable
+              postDetails?.buyStatus === 0 ? (
+                <>
+                  <Heading
+                    style={{
+                      marginTop: "10px",
+                      textAlign: "left",
+                      marginBottom: "0px",
+                    }}
+                  >
+                    Value :
+                  </Heading>
+                  <Heading
+                    style={{
+                      textAlign: "left",
+                      fontSize: "40px",
+                      marginTop: "0px",
+                      fontWeight: "400",
+                    }}
+                  >
+                    &#8226; {postDetails?.sellValue / 10 ** 18}$
+                  </Heading>
+
+                  {postDetails.owner.address === account?.toLowerCase() ? (
+                    <Button style={{ marginTop: "25px" }}>Change Status</Button>
+                  ) : (
+                    <Button style={{ marginTop: "25px" }}>Buy</Button>
+                  )}
+                </>
+              ) : // buy status is bidding
+              postDetails?.buyStatus === 1 ? (
+                <>
+                  <Heading
+                    style={{
+                      marginTop: "10px",
+                      textAlign: "left",
+                      marginBottom: "0px",
+                    }}
+                  >
+                    Bidding Ends :
+                  </Heading>
+                  <Heading
+                    style={{
+                      textAlign: "left",
+                      fontSize: "40px",
+                      marginTop: "0px",
+                      fontWeight: "400",
+                    }}
+                  >
+                    &#8226; {biddingDate}
+                  </Heading>
+                  <Heading
+                    style={{
+                      marginTop: "10px",
+                      textAlign: "left",
+                      marginBottom: "0px",
+                    }}
+                  >
+                    Last Bid :
+                  </Heading>
+                  <Heading
+                    style={{
+                      textAlign: "left",
+                      fontSize: "40px",
+                      marginTop: "0px",
+                      fontWeight: "400",
+                    }}
+                  >
+                    &#8226; {biddingPrice}$
+                  </Heading>
+                  <Heading
+                    style={{
+                      marginTop: "10px",
+                      textAlign: "left",
+                      marginBottom: "0px",
+                    }}
+                  >
+                    Last Bidder :
+                  </Heading>
+                  <Heading
+                    style={{
+                      textAlign: "left",
+                      fontSize: "40px",
+                      marginTop: "0px",
+                      fontWeight: "400",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => {
+                      navigate(
+                        `/profile/${
+                          biddingAddress !==
+                          "0x0000000000000000000000000000000000000000"
+                            ? biddingAddress
+                            : postDetails.owner.address
+                        }`
+                      );
+                    }}
+                  >
+                    &#8226;
+                    {biddingAddress ===
+                    "0x0000000000000000000000000000000000000000"
+                      ? postDetails.owner.address.slice(0, 5) +
+                        "..." +
+                        postDetails.owner.address.slice(37, 43)
+                      : biddingAddress.slice(0, 5) +
+                        "..." +
+                        biddingAddress.slice(37, 43)}
+                  </Heading>
+
+                  {postDetails.owner.address !== account?.toLowerCase() ? (
+                    <>
+                      <Heading
+                        style={{
+                          marginTop: "10px",
+                          textAlign: "left",
+                          marginBottom: "0px",
+                        }}
+                      >
+                        Your Bid:
+                      </Heading>
+                      <Input
+                        placeholder="Enter amount"
+                        type={"number"}
+                        style={{ marginTop: "10px" }}
+                      />
+                      <Button style={{ marginTop: "25px" }}>Bid</Button>
+                    </>
+                  ) : Math.floor(Date.now() / 1000) >
+                    parseInt(biddingTimestamp) ? (
+                    <Button style={{ marginTop: "25px" }}>Claim Bid</Button>
+                  ) : null}
+                </>
+              ) : null
+            }
             <div style={{ display: "flex", alignItems: "center" }}>
               <Heading
                 style={{

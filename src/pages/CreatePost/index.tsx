@@ -166,7 +166,7 @@ const Index: FC = () => {
   const [status, setStatus] = useState("2");
   const [price, setPrice] = useState("");
   const theme = useTheme();
-  const [bidDuration, setBidDuration] = useState<number>();
+  const [bidDuration, setBidDuration] = useState<number>(0);
 
   const handleStatusChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setStatus((event.target as HTMLInputElement).value);
@@ -179,9 +179,15 @@ const Index: FC = () => {
   const navigate = useNavigate();
 
   const uploadFileAndCreatePost = async () => {
-    setLoading(true);
     try {
-      if (selectedFile) {
+      if (
+        selectedFile &&
+        !isNaN(parseInt(price)) &&
+        titleValue !== "" &&
+        descValue !== ""
+      ) {
+        setLoading(true);
+
         const arrayBuffer = await selectedFile.arrayBuffer();
 
         const ipfs = create({
