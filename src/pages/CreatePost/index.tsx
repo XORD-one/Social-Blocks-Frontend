@@ -180,6 +180,9 @@ const Index: FC = () => {
 
   const uploadFileAndCreatePost = async () => {
     try {
+      if (status === "2") {
+        setPrice("0");
+      }
       if (
         selectedFile &&
         !isNaN(parseInt(price)) &&

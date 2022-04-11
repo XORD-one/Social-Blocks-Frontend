@@ -9,6 +9,8 @@ import SearchButton from "../../components/SearchButton";
 
 import { useAppSelector } from "../../hooks";
 import PostSkeleton from "../../components/Skeletons/PostSkeleton";
+import { useWeb3React } from "@web3-react/core";
+import { useNavigate } from "react-router-dom";
 
 const Body = styled("div")(({ theme }) => ({
   width: "100vw",
@@ -72,11 +74,13 @@ const getSkeleton = () => {
 export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [posts, setPosts] = useState<SinglePost[]>([]);
+  const { account } = useWeb3React();
+  const navigate = useNavigate();
 
   const getPosts = async () => {
     setLoading(true);
     await axios({
-      url: `https://socialblocks.herokuapp.com/posts/getPosts`,
+      url: `https://socialblocks.herokuapp.com/posts/getPosts/${account}`,
       method: "get",
     }).then((response) => {
       if (response?.data) {
@@ -96,9 +100,29 @@ export default function Home() {
     <Body>
       <Header />
       <MainDiv>
-        {loading
-          ? getSkeleton()
-          : posts.map((item, i) => <Post key={i} post={item} />)}
+        {loading ? (
+          getSkeleton()
+        ) : posts.length === 0 ? (
+          <Heading
+            style={{
+              marginTop: "30px",
+              fontWeight: "400",
+              fontSize: "25px",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              navigate("/search");
+            }}
+          >
+            Your feed is empty !
+            <br />
+            <span style={{ fontWeight: "500" }}>Search &#38; Follow </span>
+            <br />
+            creators to see their posts.
+          </Heading>
+        ) : (
+          posts.map((item, i) => <Post key={i} post={item} />)
+        )}
       </MainDiv>
       <SearchButton />
       <FloatingActionButton />

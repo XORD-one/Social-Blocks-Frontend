@@ -107,8 +107,8 @@ export default function Home() {
     setSearchedUsers([...users]);
     allUsers.forEach((e) => {
       if (
-        e.displayName.includes(searchValue) ||
-        e.userName.includes(searchValue)
+        e.displayName.toLowerCase().includes(searchValue.toLowerCase()) ||
+        e.userName.toLowerCase().includes(searchValue.toLowerCase())
       ) {
         users = [...users, e];
       }
@@ -133,7 +133,7 @@ export default function Home() {
           <Heading style={{ marginTop: "30px" }}>No User Found...</Heading>
         ) : (
           <>
-            <Heading>
+            <Heading style={{ marginTop: "30px" }}>
               {user ? user?.displayName + "'s followers" : "Loading..."}
             </Heading>
             {searchedUsers?.map((item, i) => (

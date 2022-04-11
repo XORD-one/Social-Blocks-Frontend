@@ -78,6 +78,11 @@ const PostDescription = styled("div")(({ theme }) => ({
 const PostContent = styled("img")(({ theme }) => ({
   width: "100%",
   height: "fit-content",
+  maxHeight: "450px",
+  minHeight: "300px",
+  objectFit: "cover",
+  backgroundColor: theme.palette.background.paper,
+  overflow: "hidden",
   boxShadow: "0 0 1rem 0 " + alpha("#000", 0.2),
   borderTop: "solid 3px " + alpha(theme.palette.text.primary, 0.5),
   borderBottom: "solid 3px " + alpha(theme.palette.text.primary, 0.5),

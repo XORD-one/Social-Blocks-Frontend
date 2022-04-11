@@ -97,8 +97,8 @@ export default function Home() {
     setSearchedUsers([...users]);
     allUsers.forEach((e) => {
       if (
-        e.displayName.includes(searchValue) ||
-        e.userName.includes(searchValue)
+        e.displayName.toLowerCase().includes(searchValue.toLowerCase()) ||
+        e.userName.toLowerCase().includes(searchValue.toLowerCase())
       ) {
         users = [...users, e];
       }

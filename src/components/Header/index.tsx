@@ -82,7 +82,13 @@ export default function HeaderComponent(props) {
                   src={theme.palette.mode === "dark" ? Logo1 : Logo2}
                 />
                 &nbsp; &nbsp;
-                <Heading>Social Blocks</Heading>
+                <Heading
+                  onClick={() => {
+                    navigate("/");
+                  }}
+                >
+                  Social Blocks
+                </Heading>
               </>
             ) : null}
           </>

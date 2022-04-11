@@ -320,7 +320,9 @@ const PostDetail: FC = () => {
       <MainContainer>
         {postDetails ? (
           <MainDiv>
-            <Heading style={{ fontWeight: "800" }}>PostId #{postId}</Heading>
+            <Heading style={{ fontWeight: "800", fontSize: "30px" }}>
+              PostId#{postId}
+            </Heading>
             <PostContent src={postDetails?.image} />
             <Heading style={{ marginTop: "10px" }}>{postDetails?.name}</Heading>
             <Heading style={{ fontSize: "20px" }}>
@@ -497,7 +499,7 @@ const PostDetail: FC = () => {
                     &#8226;
                     {biddingAddress ===
                     "0x0000000000000000000000000000000000000000"
-                      ? postDetails.owner.address.slice(0, 5) +
+                      ? postDetails.owner.address.slice(0, 7) +
                         "..." +
                         postDetails.owner.address.slice(37, 43)
                       : biddingAddress.slice(0, 5) +

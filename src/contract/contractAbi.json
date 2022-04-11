@@ -141,7 +141,13 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "tokenId",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "id",
         "type": "uint256"
       }
     ],
@@ -305,6 +311,12 @@
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
       }
     ],
     "name": "PostSold",
@@ -363,12 +375,11 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "_postId", "type": "uint256" },
-      { "internalType": "uint256", "name": "_price", "type": "uint256" }
+      { "internalType": "uint256", "name": "_postId", "type": "uint256" }
     ],
     "name": "bid",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -377,7 +388,7 @@
     ],
     "name": "buyPost",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -638,6 +649,15 @@
     "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "name": "rewardClaimed",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "rewardToken",
+    "outputs": [
+      { "internalType": "contract IERC20", "name": "", "type": "address" }
+    ],
     "stateMutability": "view",
     "type": "function"
   },
