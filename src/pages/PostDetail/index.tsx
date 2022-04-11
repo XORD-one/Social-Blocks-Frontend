@@ -272,6 +272,33 @@ const PostDetail: FC = () => {
     setBiddingTimestamp(info[2]);
   };
 
+  const buy = async () => {
+    const web3 = new Web3(web3Context?.library?.currentProvider);
+    const contract = new web3.eth.Contract(
+      contractAbi as any,
+      CONTRACT_ADDRESS
+    );
+    // const info = await contract.methods.getLastBidInfoById(postId).call();
+  };
+
+  const claimReward = async () => {
+    const web3 = new Web3(web3Context?.library?.currentProvider);
+    const contract = new web3.eth.Contract(
+      contractAbi as any,
+      CONTRACT_ADDRESS
+    );
+    // const info = await contract.methods.getLastBidInfoById(postId).call();
+  };
+
+  const changeStatus = async () => {
+    const web3 = new Web3(web3Context?.library?.currentProvider);
+    const contract = new web3.eth.Contract(
+      contractAbi as any,
+      CONTRACT_ADDRESS
+    );
+    // const info = await contract.methods.getLastBidInfoById(postId).call();
+  };
+
   useEffect(() => {
     setPostId(window.location.href.split("/")[4]);
   }, []);
@@ -315,6 +342,9 @@ const PostDetail: FC = () => {
                 <div style={{ fontSize: "15px", fontWeight: "500" }}>Value</div>
               </InfoTab>
             </InfoContainer>
+            {postDetails?.owner?.address === account?.toLowerCase() ? (
+              <Button style={{ marginTop: "25px" }}>Claim Reward</Button>
+            ) : null}
             <Heading style={{ marginTop: "10px", textAlign: "left" }}>
               Creator :
             </Heading>
@@ -385,7 +415,14 @@ const PostDetail: FC = () => {
                   {postDetails.owner.address === account?.toLowerCase() ? (
                     <Button style={{ marginTop: "25px" }}>Change Status</Button>
                   ) : (
-                    <Button style={{ marginTop: "25px" }}>Buy</Button>
+                    <Button
+                      style={{ marginTop: "25px" }}
+                      onClick={() => {
+                        buy();
+                      }}
+                    >
+                      Buy
+                    </Button>
                   )}
                 </>
               ) : // buy status is bidding

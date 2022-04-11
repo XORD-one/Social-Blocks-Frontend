@@ -14,6 +14,8 @@ import Transparent from "../../assets/transparent.png";
 import { useMediaQuery } from "@mui/material";
 import UserDetailsSkeleton from "../../components/Skeletons/UserDetailsSkeleton";
 import PostSkeleton from "../../components/Skeletons/PostSkeleton";
+import { useNavigate } from "react-router-dom";
+import { useAppSelector } from "../../hooks";
 
 const Body = styled("div")(({ theme }) => ({
   width: "100vw",
@@ -141,6 +143,7 @@ export default function LetterAvatars() {
   const [ownedPosts, setOwnedPosts] = useState<any[]>([]);
   const [ownedPostsLoading, setOwnedPostsLoading] = useState(true);
   const [postType, setPostType] = useState<string>("owned");
+  const [followStatus, setFollowStatus] = useState<boolean>(false);
 
   const [likes, setLikes] = useState(100);
 
@@ -151,6 +154,11 @@ export default function LetterAvatars() {
   const theme = useTheme();
   //@ts-ignore
   const isMobile = useMediaQuery(theme?.breakpoints?.down("sm"));
+  const navigate = useNavigate();
+  const signature = useAppSelector((state) => state.userReducer.signature);
+  const walletAddress = useAppSelector(
+    (state) => state.userReducer.walletAddress
+  );
 
   const getCreatedPosts = async () => {
     const result = await axios.get(
@@ -196,6 +204,12 @@ export default function LetterAvatars() {
   }, [address]);
 
   useEffect(() => {
+    if (user?.followers?.includes(walletAddress?.toLowerCase())) {
+      setFollowStatus(true);
+    }
+  }, [user]);
+
+  useEffect(() => {
     let count = 0;
     createdPosts.forEach((e) => {
       count += e?.likesArray?.length;
@@ -203,8 +217,42 @@ export default function LetterAvatars() {
     setLikes(count);
   }, [createdPosts]);
 
-  const follow = () => {
-    // follow implementation.
+  const follow = async () => {
+    if (!account) {
+      navigate("/connect");
+      return;
+    }
+    setFollowStatus(true);
+    let result = await axios.post(
+      "https://socialblocks.herokuapp.com/users/follow",
+      {
+        userAddress: walletAddress?.toLowerCase(),
+        followUser: user?.address,
+        signature,
+      }
+    );
+    setUser((state) => ({
+      ...state,
+      followers: [...state.followers, walletAddress?.toLowerCase()],
+    }));
+    setFollowStatus(true);
+  };
+
+  const unFollow = async () => {
+    if (!account) {
+      navigate("/connect");
+      return;
+    }
+    setFollowStatus(false);
+    let result = await axios.post(
+      "https://socialblocks.herokuapp.com/users/unfollow",
+      {
+        userAddress: walletAddress?.toLowerCase(),
+        followUser: user?.address,
+        signature,
+      }
+    );
+    setFollowStatus(false);
   };
 
   return (
@@ -227,6 +275,8 @@ export default function LetterAvatars() {
               onClick={() => {
                 if (user?.address?.toLowerCase() === account?.toLowerCase()) {
                   setEditModalStatus(true);
+                } else if (followStatus) {
+                  unFollow();
                 } else {
                   follow();
                 }
@@ -234,7 +284,9 @@ export default function LetterAvatars() {
             >
               {user?.address?.toLowerCase() === account?.toLowerCase()
                 ? "Edit Profile"
-                : "Follow"}
+                : followStatus
+                ? "Unfollow"
+                : "follow"}
             </Button>
             <InfoContainer>
               <InfoTab>
