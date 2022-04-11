@@ -293,14 +293,22 @@ export default function LetterAvatars() {
                 <div>{ownedPosts.length}</div>
                 <div style={{ fontSize: "15px", fontWeight: "500" }}>Posts</div>
               </InfoTab>
-              <InfoTab>
+              <InfoTab
+                onClick={() => {
+                  navigate(`/followers/${user?.address}`);
+                }}
+              >
                 <div>{user?.followers?.length}</div>
                 <div style={{ fontSize: "15px", fontWeight: "500" }}>
                   Followers
                 </div>
               </InfoTab>
               {!isMobile ? (
-                <InfoTab>
+                <InfoTab
+                  onClick={() => {
+                    navigate(`/followings/${user?.address}`);
+                  }}
+                >
                   <div>{user?.following?.length}</div>
                   <div style={{ fontSize: "15px", fontWeight: "500" }}>
                     Following

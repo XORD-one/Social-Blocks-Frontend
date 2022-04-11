@@ -11,6 +11,8 @@ import { useDispatch } from "react-redux";
 import { initializeContract } from "../utils/contractMethods";
 import Search from "../pages/Search";
 import PostDetail from "../pages/PostDetail";
+import Followers from "../pages/Followers";
+import Followings from "../pages/Followings";
 
 const ConnectedRoutes = () => {
   return useRoutes([
@@ -44,6 +46,14 @@ const ConnectedRoutes = () => {
         {
           path: "search",
           element: <Search />,
+        },
+        {
+          path: "followers",
+          children: [{ path: "*", element: <Followers /> }],
+        },
+        {
+          path: "followings",
+          children: [{ path: "*", element: <Followings /> }],
         },
         {
           path: "post",
@@ -86,6 +96,14 @@ const NotConnectedRoutes = () => {
         {
           path: "search",
           element: <Search />,
+        },
+        {
+          path: "followers",
+          children: [{ path: "*", element: <Followers /> }],
+        },
+        {
+          path: "followings",
+          children: [{ path: "*", element: <Followings /> }],
         },
         {
           path: "post",

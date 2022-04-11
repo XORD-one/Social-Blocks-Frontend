@@ -76,7 +76,7 @@ export default function Home() {
   const getPosts = async () => {
     setLoading(true);
     await axios({
-      url: `https://calm-tor-92545.herokuapp.com/posts/getPosts`,
+      url: `https://socialblocks.herokuapp.com/posts/getPosts`,
       method: "get",
     }).then((response) => {
       if (response?.data) {

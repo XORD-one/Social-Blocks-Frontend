@@ -108,7 +108,10 @@ export default function HeaderComponent(props) {
         autoFocus={props?.isSearchPage ? true : false}
         isSearchPage={props?.isSearchPage}
         onClick={() => {
-          if (window.location.href.split("/")[3] !== "search") {
+          if (
+            window.location.href.split("/")[3] !== "search" &&
+            !props.followPage
+          ) {
             navigate("/search");
           }
         }}
