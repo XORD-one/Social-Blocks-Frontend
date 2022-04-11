@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { conciseWalletAddress } from "../../utils/formattingFunctions";
 import { useTheme } from "@emotion/react";
 import { useMediaQuery } from "@mui/material";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 export default function BasicMenu() {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -52,8 +54,10 @@ export default function BasicMenu() {
           onClick={() => {
             navigate(`/profile/${account}`);
           }}
+          sx={{ fontSize: "25px", fontFamily: "Montserrat" }}
         >
-          Profile
+          <AccountBoxIcon />
+          &nbsp; Profile
         </MenuItem>
         {/* <MenuItem onClick={handleClose}>Change Wallet</MenuItem> */}
         <MenuItem
@@ -61,8 +65,10 @@ export default function BasicMenu() {
             deactivate();
             navigate(`/home`);
           }}
+          sx={{ fontSize: "25px", fontFamily: "Montserrat" }}
         >
-          Disconnet
+          <LogoutIcon />
+          &nbsp; Disconnet
         </MenuItem>
       </Menu>
     </div>
