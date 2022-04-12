@@ -299,6 +299,15 @@ const PostDetail: FC = () => {
     // const info = await contract.methods.getLastBidInfoById(postId).call();
   };
 
+  const bid = async () => {
+    const web3 = new Web3(web3Context?.library?.currentProvider);
+    const contract = new web3.eth.Contract(
+      contractAbi as any,
+      CONTRACT_ADDRESS
+    );
+    // const info = await contract.methods.getLastBidInfoById(postId).call();
+  };
+
   useEffect(() => {
     setPostId(window.location.href.split("/")[4]);
   }, []);
@@ -523,7 +532,14 @@ const PostDetail: FC = () => {
                         type={"number"}
                         style={{ marginTop: "10px" }}
                       />
-                      <Button style={{ marginTop: "25px" }}>Bid</Button>
+                      <Button
+                        style={{ marginTop: "25px" }}
+                        onClick={() => {
+                          bid();
+                        }}
+                      >
+                        Bid
+                      </Button>
                     </>
                   ) : Math.floor(Date.now() / 1000) >
                     parseInt(biddingTimestamp) ? (
