@@ -38,6 +38,7 @@ const PostHeader = styled("div")(({ theme }) => ({
 const PostPicture = styled("img")(({ theme }) => ({
   width: "55px",
   height: "55px",
+  objectFit: "cover",
   borderRadius: "40px",
   boxShadow: "0 0 1rem 0 " + alpha("#000", 0.2),
   border: "solid 3px " + alpha(theme.palette.text.primary, 0.5),
@@ -237,15 +238,15 @@ const Post: React.FC<Props> = (props) => {
           >
             {!isMobile ? (
               <img
-                src={Transparent}
+                src={props.post.creator.image}
                 style={{
-                  backgroundImage: `url(${props.post.creator.image})`,
                   backgroundSize: "cover",
                   height: "30px",
                   width: "30px",
                   borderRadius: "100%",
+                  objectFit: "cover",
                   //@ts-ignore
-                  border: "solid 3px " + theme.palette.background.paper,
+                  border: "solid 2px " + theme.palette.background.paper,
                 }}
               />
             ) : null}
