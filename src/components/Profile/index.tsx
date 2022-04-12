@@ -31,6 +31,7 @@ const PostHeader = styled("div")(({ theme }) => ({
 const PostPicture = styled("img")(({ theme }) => ({
   width: "70px",
   height: "70px",
+  objectFit: "cover",
   borderRadius: "40px",
   border: "solid 3px " + alpha(theme.palette.text.primary, 0.5),
   cursor: "pointer",

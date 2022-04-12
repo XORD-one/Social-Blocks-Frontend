@@ -224,7 +224,7 @@ const Post: React.FC<Props> = (props) => {
               position: "absolute",
               bottom: "20px",
               right: "10px",
-              padding: isMobile ? "3px" : "5px",
+              padding: isMobile ? "3px" : "3px",
               //@ts-ignore
               border: "solid 3px " + theme.palette.background.paper,
               //@ts-ignore
@@ -241,12 +241,12 @@ const Post: React.FC<Props> = (props) => {
                 src={props.post.creator.image}
                 style={{
                   backgroundSize: "cover",
-                  height: "30px",
-                  width: "30px",
+                  height: "40px",
+                  width: "40px",
                   borderRadius: "100%",
                   objectFit: "cover",
                   //@ts-ignore
-                  border: "solid 2px " + theme.palette.background.paper,
+                  border: "solid 3px " + theme.palette.background.paper,
                 }}
               />
             ) : null}
@@ -254,7 +254,8 @@ const Post: React.FC<Props> = (props) => {
             <span
               style={{
                 //@ts-ignore
-                color: theme.palette.background.paper,
+                color: theme.palette.primary.main,
+                opacity: "0.7",
                 fontSize: isMobile ? "15px" : "20px",
                 fontWeight: "500",
               }}
@@ -288,13 +289,17 @@ const Post: React.FC<Props> = (props) => {
           />
         )}
         <PostLikeCount>{postLikes}</PostLikeCount>
-        {props.post.sellValue === 0 ? (
+        {props.post.buyStatus === 2 ? (
           <PostBuy onClick={() => navigate(`/post/${props.post._id}`)}>
             NFS
           </PostBuy>
+        ) : props.post.buyStatus === 1 ? (
+          <PostBuy onClick={() => navigate(`/post/${props.post._id}`)}>
+            Bidding
+          </PostBuy>
         ) : (
           <PostBuy onClick={() => navigate(`/post/${props.post._id}`)}>
-            {props.post.sellValue / 10 ** 18}$
+            {props.post.sellValue / 10 ** 18} Eth
           </PostBuy>
         )}
         &nbsp; &nbsp;
