@@ -182,6 +182,7 @@ const CommentUser = styled('div')(({ theme }) => ({
 const PostDetail: FC = () => {
   const [commentStatus, setCommentStatus] = useState(false);
   const [commentingModalStatus, setCommentingModalStatus] = useState(false);
+  const [buyModalStatus, setBuyModalStatus] = useState(false);
   const [postId, setPostId] = useState('');
   const [postDetails, setPostDetails] = useState<any>(null);
   const [comments, setComments] = useState<any[]>([]);
@@ -271,12 +272,31 @@ const PostDetail: FC = () => {
   };
 
   const buy = async () => {
+    if (!account) {
+      navigate('/connect');
+      return;
+    }
     const web3 = new Web3(web3Context?.library?.currentProvider);
     const contract = new web3.eth.Contract(
       contractAbi as any,
       CONTRACT_ADDRESS,
     );
-    // const info = await contract.methods.getLastBidInfoById(postId).call();
+
+    setBuyModalStatus(true);
+
+    contract.methods
+      .buyPost(postId)
+      .send({ from: account, value: postDetails.sellValue })
+      .on('transactionHash', hash => {
+        console.log('transaction hash: ' + hash);
+      })
+      .on('confirmation', async function (confirmationNumber) {
+        if (confirmationNumber === 1) {
+          navigate(`/profile/${account}`);
+          setBuyModalStatus(false);
+        }
+      })
+      .on('error');
   };
 
   const claimReward = async () => {
@@ -288,7 +308,7 @@ const PostDetail: FC = () => {
       );
 
       const { data } = await axios.post(
-        'http://localhost:5000/likes/getLikesHash',
+        'https://socialblocks.herokuapp.com/likes/getLikesHash',
         {
           signature,
           userAddress: walletAddress,
@@ -299,9 +319,20 @@ const PostDetail: FC = () => {
       console.log('data =', data);
 
       await contract.methods
-        .claimPostReward(postId, likes.length, data.signature, data.messageHash)
+        .claimPostReward(
+          parseInt(postId),
+          likes.length,
+          data.signedObject.signature,
+          data.signedObject.messageHash,
+        )
         .send({
           from: walletAddress,
+        })
+        .on('transactionHash', hash => {
+          console.log('transaction hash: ' + hash);
+        })
+        .on('confirmation', confirmationNumber => {
+          console.log('confirmationNumber =', confirmationNumber);
         });
     } catch (error) {
       console.log('error -', error);
@@ -616,6 +647,11 @@ const PostDetail: FC = () => {
               <Loader />
               <br /> <br />
               <Heading>Adding Comment...</Heading>
+            </CustomModal>
+            <CustomModal open={buyModalStatus} handleClose={() => {}}>
+              <Loader />
+              <br /> <br />
+              <Heading>Buying Post...</Heading>
             </CustomModal>
           </MainDiv>
         ) : (
