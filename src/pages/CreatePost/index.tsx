@@ -277,7 +277,7 @@ const Index: FC = () => {
                 disableRipple
               />
             }
-            label="Not For Sell"
+            label="Not For Sale"
           />
           <FormControlLabel
             value="1"
@@ -327,7 +327,7 @@ const Index: FC = () => {
         <br />
         {status === "0" && (
           <>
-            <Label>Price :</Label>
+            <Label>Price (Eth) :</Label>
             <Input
               placeholder="Enter price."
               value={price}
@@ -339,7 +339,7 @@ const Index: FC = () => {
         )}
         {status === "1" && (
           <>
-            <Label>Base Price :</Label>
+            <Label>Base Price (Eth) :</Label>
             <Input
               placeholder="Enter base price."
               value={price}

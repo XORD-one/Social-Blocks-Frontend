@@ -10,12 +10,14 @@ import axios from "axios";
 import PostDetailsSkeleton from "../../components/Skeletons/PostDetailsSkeleton/index";
 import { useAppSelector } from "../../hooks";
 import CustomModal from "../../components/CustomModal";
+import CustomFormModal from "../../components/CustomFormModal";
 import Loader from "../../components/Loader";
 import { useNavigate } from "react-router-dom";
 import { useWeb3React } from "@web3-react/core";
 import Web3 from "web3";
 import { CONTRACT_ADDRESS } from "../../contract/constants";
 import contractAbi from "../../contract/contractAbi.json";
+import ChangeStatusModal from "./ChangeStatusModal/index";
 
 const Body = styled("div")(({ theme }) => ({
   width: "100vw",
@@ -187,7 +189,9 @@ const PostDetail: FC = () => {
   const [commentingModalStatus, setCommentingModalStatus] = useState(false);
   const [buyModalStatus, setBuyModalStatus] = useState(false);
   const [claimModalStatus, setClaimModalStatus] = useState(false);
+  const [statusFormModalStatus, setStatusFormModalStatus] = useState(false);
   const [statusModalStatus, setStatusModalStatus] = useState(false);
+  const [biddingModalStatus, setBiddingModalStatus] = useState(false);
 
   const [postId, setPostId] = useState("");
   const [postDetails, setPostDetails] = useState<any>(null);
@@ -206,6 +210,10 @@ const PostDetail: FC = () => {
   const [biddingDate, setBiddingDate] = useState<string>("---");
   const [biddingPrice, setBiddingPrice] = useState<any>("---");
   const [biddingAddress, setBiddingAddress] = useState<string>("---");
+
+  const [claimableAmount, setClaimableAmount] = useState(0);
+
+  const [bidAmmount, setBidAmount] = useState(0);
 
   const getPostDetails = async () => {
     if (postId !== "") {
@@ -246,6 +254,9 @@ const PostDetail: FC = () => {
         "https://socialblocks.herokuapp.com/comment/getcomments/" + postId
       );
       setComments(result?.data?.comments);
+      if (result?.data?.comments?.length == 0) {
+        setCommentStatus(true);
+      }
     }
   };
 
@@ -355,13 +366,100 @@ const PostDetail: FC = () => {
     }
   };
 
-  const changeStatus = async () => {
+  const changeStatus = async (status, price, bidDuration) => {
     const web3 = new Web3(web3Context?.library?.currentProvider);
     const contract = new web3.eth.Contract(
       contractAbi as any,
       CONTRACT_ADDRESS
     );
+
+    if (status === "2") {
+      price = "0";
+    }
+
+    if (
+      status != "" &&
+      status != postDetails.buyStatus &&
+      !isNaN(parseFloat(price)) &&
+      parseFloat(price) > 0
+    ) {
+      setStatusFormModalStatus(false);
+      setStatusModalStatus(true);
+
+      var date = new Date();
+      date.setDate(date.getDate() + bidDuration);
+
+      contract.methods
+        .changePostInfo(
+          postId,
+          status,
+          Web3.utils.toWei(price),
+          Math.floor(date.getTime() / 1000).toString()
+        )
+        .send({ from: account })
+        .on("transactionHash", (hash) => {
+          console.log("transaction hash: " + hash);
+        })
+        .on("confirmation", (confirmationNumber) => {
+          if (confirmationNumber === 1) {
+            console.log("confirmationNumber =", confirmationNumber);
+            setStatusModalStatus(false);
+            let id = postId;
+            setPostId("0");
+            setPostId(id);
+          }
+        })
+        .on("error", async function (error) {
+          setStatusModalStatus(false);
+        });
+    }
     // const info = await contract.methods.getLastBidInfoById(postId).call();
+  };
+
+  const getClaimableAmount = async () => {
+    const web3 = new Web3(
+      "https://rinkeby.infura.io/v3/7c4e9e4322bc446195e561d9ea27d827"
+    );
+    const contract = new web3.eth.Contract(
+      contractAbi as any,
+      CONTRACT_ADDRESS
+    );
+    let likesClaimed = await contract.methods.idToLikes(postId).call();
+    setClaimableAmount((likes.length - parseInt(likesClaimed)) * 0.001);
+  };
+
+  const bid = async () => {
+    if (!account) {
+      navigate("/connect");
+      return;
+    }
+    const web3 = new Web3(web3Context?.library?.currentProvider);
+    const contract = new web3.eth.Contract(
+      contractAbi as any,
+      CONTRACT_ADDRESS
+    );
+
+    if (!isNaN(bidAmmount) && bidAmmount > parseFloat(biddingPrice)) {
+      setBiddingModalStatus(true);
+
+      contract.methods
+        .bid(postId)
+        .send({
+          from: account,
+          value: web3.utils.toWei(bidAmmount.toString(), "ether"),
+        })
+        .on("transactionHash", (hash) => {
+          console.log("transaction hash: " + hash);
+        })
+        .on("confirmation", async function (confirmationNumber) {
+          if (confirmationNumber === 1) {
+            setBiddingModalStatus(false);
+          }
+        })
+        .on("error", async function (error) {
+          setBiddingModalStatus(false);
+        });
+    }
   };
 
   useEffect(() => {
@@ -369,8 +467,10 @@ const PostDetail: FC = () => {
   }, []);
 
   useEffect(() => {
-    getPostDetails();
-    getComments();
+    if (postId != "0") {
+      getPostDetails();
+      getComments();
+    }
   }, [postId]);
 
   useEffect(() => {
@@ -378,6 +478,12 @@ const PostDetail: FC = () => {
       getBiddingDetails();
     }
   }, [postDetails]);
+
+  useEffect(() => {
+    if (likes.length > 0) {
+      getClaimableAmount();
+    }
+  }, [likes]);
 
   return (
     <Body>
@@ -405,17 +511,30 @@ const PostDetail: FC = () => {
                 </div>
               </InfoTab>
               <InfoTab>
-                <div>{postDetails?.sellValue / 10 ** 18} &nbsp;Eth</div>
+                <div>
+                  {postDetails.buyStatus == 0 ? (
+                    <>{postDetails?.sellValue / 10 ** 18}Ξ</>
+                  ) : postDetails.buyStatus == 1 ? (
+                    <>{biddingPrice}Ξ</>
+                  ) : (
+                    <>NFS</>
+                  )}
+                </div>
                 <div style={{ fontSize: "15px", fontWeight: "500" }}>Value</div>
               </InfoTab>
             </InfoContainer>
             {postDetails?.owner?.address === account?.toLowerCase() ? (
-              <Button
-                onClick={() => claimReward()}
-                style={{ marginTop: "25px" }}
-              >
-                Claim Reward
-              </Button>
+              <>
+                <Heading style={{ marginBottom: "0px", marginTop: "30px" }}>
+                  Reward : {claimableAmount}
+                </Heading>
+                <Button
+                  onClick={() => claimReward()}
+                  style={{ marginTop: "25px" }}
+                >
+                  Claim Reward
+                </Button>
+              </>
             ) : null}
             <Heading style={{ marginTop: "10px", textAlign: "left" }}>
               Creator :
@@ -481,11 +600,24 @@ const PostDetail: FC = () => {
                       fontWeight: "400",
                     }}
                   >
-                    &#8226; {postDetails?.sellValue / 10 ** 18}&nbsp;Eth
+                    {postDetails.buyStatus == 0 ? (
+                      <>&#8226; {postDetails?.sellValue / 10 ** 18}Eth</>
+                    ) : postDetails.buyStatus == 1 ? (
+                      <>&#8226; {postDetails?.sellValue / 10 ** 18}Eth</>
+                    ) : (
+                      <>&#8226; Not For Sale.</>
+                    )}
                   </Heading>
 
                   {postDetails.owner.address === account?.toLowerCase() ? (
-                    <Button style={{ marginTop: "25px" }}>Change Status</Button>
+                    <Button
+                      style={{ marginTop: "25px" }}
+                      onClick={() => {
+                        setStatusFormModalStatus(true);
+                      }}
+                    >
+                      Change Status &#38; Price
+                    </Button>
                   ) : (
                     <Button
                       style={{ marginTop: "25px" }}
@@ -536,7 +668,7 @@ const PostDetail: FC = () => {
                       fontWeight: "400",
                     }}
                   >
-                    &#8226; {biddingPrice} &nbsp; Eth
+                    &#8226; {biddingPrice} Eth
                   </Heading>
                   <Heading
                     style={{
@@ -586,21 +718,53 @@ const PostDetail: FC = () => {
                           marginBottom: "0px",
                         }}
                       >
-                        Your Bid:
+                        Your Bid (Eth) :
                       </Heading>
                       <Input
                         placeholder="Enter amount"
                         type={"number"}
                         style={{ marginTop: "10px" }}
+                        onChange={(e) => {
+                          setBidAmount(parseFloat(e.target.value));
+                        }}
                       />
-                      <Button style={{ marginTop: "25px" }}>Bid</Button>
+                      <Button
+                        style={{ marginTop: "25px" }}
+                        onClick={() => {
+                          bid();
+                        }}
+                      >
+                        Bid
+                      </Button>
                     </>
                   ) : Math.floor(Date.now() / 1000) >
                     parseInt(biddingTimestamp) ? (
                     <Button style={{ marginTop: "25px" }}>Claim Bid</Button>
                   ) : null}
                 </>
-              ) : null
+              ) : (
+                <>
+                  {postDetails.owner.address === account?.toLowerCase() ? (
+                    <Button
+                      style={{ marginTop: "25px" }}
+                      onClick={() => {
+                        setStatusFormModalStatus(true);
+                      }}
+                    >
+                      Change Status &#38; Price
+                    </Button>
+                  ) : (
+                    <Button
+                      style={{ marginTop: "25px" }}
+                      onClick={() => {
+                        buy();
+                      }}
+                    >
+                      Buy
+                    </Button>
+                  )}
+                </>
+              )
             }
             <div style={{ display: "flex", alignItems: "center" }}>
               <Heading
@@ -692,10 +856,27 @@ const PostDetail: FC = () => {
               <br /> <br />
               <Heading>Claming Reward...</Heading>
             </CustomModal>
+            <CustomFormModal
+              open={statusFormModalStatus}
+              handleClose={() => {
+                setStatusFormModalStatus(false);
+              }}
+            >
+              <ChangeStatusModal
+                title={postDetails?.name}
+                description={postDetails?.description}
+                changeStatus={changeStatus}
+              />
+            </CustomFormModal>
             <CustomModal open={statusModalStatus} handleClose={() => {}}>
               <Loader />
               <br /> <br />
               <Heading>Changing Status...</Heading>
+            </CustomModal>
+            <CustomModal open={biddingModalStatus} handleClose={() => {}}>
+              <Loader />
+              <br /> <br />
+              <Heading>Bidding...</Heading>
             </CustomModal>
           </MainDiv>
         ) : (

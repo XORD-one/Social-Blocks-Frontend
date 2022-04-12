@@ -4,7 +4,7 @@ import Post from "../../components/Post";
 import { styled, alpha } from "@mui/system";
 import Header from "../../components/Header";
 import axios from "axios";
-import CustomModal from "../../components/CustomModal";
+import CustomFormModal from "../../components/CustomFormModal";
 import { useWeb3React } from "@web3-react/core";
 import Button from "../../components/Button";
 import EditModal from "./components/EditModal";
@@ -378,7 +378,7 @@ export default function LetterAvatars() {
         ) : null}
       </MainDiv>
 
-      <CustomModal
+      <CustomFormModal
         open={editModalStatus}
         handleClose={() => {
           setEditModalStatus(false);
@@ -393,7 +393,7 @@ export default function LetterAvatars() {
             setEditModalStatus(false);
           }}
         />
-      </CustomModal>
+      </CustomFormModal>
     </Body>
   );
 }

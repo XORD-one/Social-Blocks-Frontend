@@ -299,7 +299,7 @@ const Post: React.FC<Props> = (props) => {
           </PostBuy>
         ) : (
           <PostBuy onClick={() => navigate(`/post/${props.post._id}`)}>
-            {props.post.sellValue / 10 ** 18} Eth
+            {props.post.sellValue / 10 ** 18} Ξ
           </PostBuy>
         )}
         &nbsp; &nbsp;

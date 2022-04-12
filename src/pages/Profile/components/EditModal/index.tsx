@@ -13,7 +13,7 @@ import { useAppSelector } from "../../../../hooks";
 const Container = styled("div")(({ theme }) => ({
   width: "100%",
   height: "100%",
-  padding: "25px",
+  padding: "35px 25px",
   overflowY: "auto",
 
   "::-webkit-scrollbar": {
@@ -154,7 +154,7 @@ const Index: FC<Prop> = (props) => {
 
   return (
     <Container>
-      <Heading>Edit Profile</Heading>
+      <Heading style={{ fontSize: "30px" }}>Edit Profile</Heading>
       <div
         style={{
           width: "150px",
