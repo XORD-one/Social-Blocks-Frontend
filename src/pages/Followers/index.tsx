@@ -127,15 +127,15 @@ export default function Home() {
         followPage={true}
       />
       <MainDiv>
+        <Heading style={{ marginTop: "30px" }}>
+          {user ? user?.displayName + "'s followers" : "Loading..."}
+        </Heading>
         {loading ? (
           getSkeleton()
         ) : searchedUsers.length === 0 ? (
-          <Heading style={{ marginTop: "30px" }}>No User Found...</Heading>
+          <Heading style={{ marginTop: "30px" }}>No User Found.</Heading>
         ) : (
           <>
-            <Heading style={{ marginTop: "30px" }}>
-              {user ? user?.displayName + "'s followers" : "Loading..."}
-            </Heading>
             {searchedUsers?.map((item, i) => (
               <Profile
                 key={i}

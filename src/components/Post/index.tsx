@@ -254,10 +254,10 @@ const Post: React.FC<Props> = (props) => {
             <span
               style={{
                 //@ts-ignore
-                color: theme.palette.primary.main,
-                opacity: "0.7",
+                color: theme.palette.background.paper,
+                opacity: "1",
                 fontSize: isMobile ? "15px" : "20px",
-                fontWeight: "500",
+                fontWeight: "700",
               }}
             >
               @{props.post.creator.userName}

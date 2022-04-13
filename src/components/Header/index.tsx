@@ -86,6 +86,7 @@ export default function HeaderComponent(props) {
                   onClick={() => {
                     navigate("/");
                   }}
+                  style={{ fontWeight: "700" }}
                 >
                   Social Blocks
                 </Heading>
@@ -103,7 +104,7 @@ export default function HeaderComponent(props) {
             {!isMobile ? (
               <>
                 &nbsp; &nbsp;
-                <Heading>Social Blocks</Heading>
+                <Heading style={{ fontWeight: "700" }}>Social Blocks</Heading>
               </>
             ) : null}
           </>

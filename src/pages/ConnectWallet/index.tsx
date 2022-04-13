@@ -81,7 +81,7 @@ const Logo = styled("img")(({ theme }) => ({
 }));
 
 const Index: FC = () => {
-  const { activate, account, library, active } = useWeb3React();
+  const { activate, account, library, active, deactivate } = useWeb3React();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -90,52 +90,58 @@ const Index: FC = () => {
   const signature = useAppSelector((state) => state.userReducer.signature);
 
   useEffect(() => {
-    if (signature && account && instance && active) {
-      (async () => {
-        const username = await isAddressReserved(account);
-        if (!username) {
-          navigate("/register");
-        } else {
-          dispatch({
-            type: "SET_USER",
-            payload: {
-              username,
-              displayName: "",
-            },
-          });
-          navigate("/home");
-        }
-      })();
-    }
-  }, [signature, account, instance, active]);
+    deactivate();
+  }, []);
 
-  useEffect(() => {
+  // useEffect(() => {}, [signature, account, instance, active]);
+
+  const getSignature = async () => {
     if (library && account && active) {
       const timeConstant = 3600;
 
       const time = Math.floor(Math.floor(Date.now() / 1000) / timeConstant);
       const hash = keccak(time.toString()).toString("hex");
 
-      (async () => {
-        const web3 = new Web3(library.currentProvider);
+      const web3 = new Web3(library.currentProvider);
 
-        const signedMessage = await web3.eth.personal.sign(hash, account, "");
+      const signedMessage = await web3.eth.personal.sign(hash, account, "");
 
-        dispatch({
-          type: "SET_WALLET_ADDRESS",
-          payload: account,
-        });
-        dispatch({
-          type: "SET_SIGNATURE",
-          payload: signedMessage,
-        });
-      })();
+      dispatch({
+        type: "SET_WALLET_ADDRESS",
+        payload: account,
+      });
+      dispatch({
+        type: "SET_SIGNATURE",
+        payload: signedMessage,
+      });
+
+      return signedMessage;
     }
-  }, [library, account, active]);
+  };
+
+  const redirect = async () => {
+    let signedMessage = await getSignature();
+    if (signedMessage && account && instance && active) {
+      const username = await isAddressReserved(account);
+      if (!username) {
+        navigate("/register");
+      } else {
+        dispatch({
+          type: "SET_USER",
+          payload: {
+            username,
+            displayName: "",
+          },
+        });
+        navigate("/home");
+      }
+    }
+  };
 
   const activateMetamaskWallet = async () => {
     try {
       await activate(injected);
+      redirect();
     } catch (e: any) {
       console.log(e);
     }
