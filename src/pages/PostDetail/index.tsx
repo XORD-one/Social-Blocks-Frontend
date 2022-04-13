@@ -75,7 +75,7 @@ const MainDiv = styled("div")(({ theme }) => ({
 const PostContent = styled("img")(({ theme }) => ({
   width: "100%",
   height: "fit-content",
-  maxHeight: "450px",
+  maxHeight: "550px",
   minHeight: "300px",
   objectFit: "cover",
   boxShadow: "0 0 1rem 0 " + alpha("#000", 0.2),
@@ -192,6 +192,7 @@ const PostDetail: FC = () => {
   const [statusFormModalStatus, setStatusFormModalStatus] = useState(false);
   const [statusModalStatus, setStatusModalStatus] = useState(false);
   const [biddingModalStatus, setBiddingModalStatus] = useState(false);
+  const [claimingBidModalStatus, setClaimingBidModalStatus] = useState(false);
 
   const [postId, setPostId] = useState("");
   const [postDetails, setPostDetails] = useState<any>(null);
@@ -458,7 +459,36 @@ const PostDetail: FC = () => {
     }
   };
 
-  const claimBid = async () => {};
+  const claimBid = async () => {
+    if (!account) {
+      navigate("/connect");
+      return;
+    }
+    const web3 = new Web3(web3Context?.library?.currentProvider);
+    const contract = new web3.eth.Contract(
+      contractAbi as any,
+      CONTRACT_ADDRESS
+    );
+
+    setClaimingBidModalStatus(true);
+
+    contract.methods
+      .claimBid(postId)
+      .send({
+        from: account,
+      })
+      .on("transactionHash", (hash) => {
+        console.log("transaction hash: " + hash);
+      })
+      .on("confirmation", async function (confirmationNumber) {
+        if (confirmationNumber === 1) {
+          setClaimingBidModalStatus(false);
+        }
+      })
+      .on("error", async function (error) {
+        setClaimingBidModalStatus(false);
+      });
+  };
 
   useEffect(() => {
     setPostId(window.location.href.split("/")[4]);
@@ -754,7 +784,11 @@ const PostDetail: FC = () => {
                     >
                       Claim Bid
                     </Button>
-                  ) : null}
+                  ) : (
+                    <Button style={{ marginTop: "25px", opacity: "0.3" }}>
+                      Claim Bid
+                    </Button>
+                  )}
                 </>
               ) : (
                 <>
@@ -891,6 +925,11 @@ const PostDetail: FC = () => {
               <Loader />
               <br /> <br />
               <Heading>Bidding...</Heading>
+            </CustomModal>
+            <CustomModal open={claimingBidModalStatus} handleClose={() => {}}>
+              <Loader />
+              <br /> <br />
+              <Heading>Claming...</Heading>
             </CustomModal>
           </MainDiv>
         ) : (
