@@ -110,15 +110,31 @@ export default function Home() {
               fontSize: "25px",
               cursor: "pointer",
             }}
-            onClick={() => {
-              navigate("/search");
-            }}
           >
             Your feed is empty !
             <br />
-            <span style={{ fontWeight: "500" }}>Search &#38; Follow </span>
+            <span
+              style={{ fontWeight: "700" }}
+              onClick={() => {
+                navigate("/search");
+              }}
+            >
+              Search &#38; Follow
+            </span>
             <br />
             creators to see their posts.
+            <br />
+            <span
+              style={{ fontWeight: "700" }}
+              onClick={() => {
+                navigate(
+                  "/followings/0x23e05938b4619035870836d22c4ef9988623c384"
+                );
+              }}
+            >
+              Top Creators
+            </span>
+            <br />
           </Heading>
         ) : (
           posts.map((item, i) => <Post key={i} post={item} />)

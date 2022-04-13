@@ -166,7 +166,10 @@ export default function LetterAvatars() {
         address +
         "&type=creator"
     );
-    setCreatedPosts(result.data);
+    setCreatedPosts(result.data.sort((a, b) => Number(b._id) - Number(a._id)));
+    setTimeout(() => {
+      setOwnedPostsLoading(false);
+    }, 500);
   };
 
   const getOwnedPosts = async () => {
@@ -175,7 +178,7 @@ export default function LetterAvatars() {
         address +
         "&type=owner"
     );
-    setOwnedPosts(result.data);
+    setOwnedPosts(result.data.sort((a, b) => Number(b._id) - Number(a._id)));
     setTimeout(() => {
       setOwnedPostsLoading(false);
     }, 500);

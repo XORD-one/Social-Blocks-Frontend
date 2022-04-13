@@ -130,7 +130,7 @@ export default function Home() {
         {loading ? (
           getSkeleton()
         ) : searchedUsers.length === 0 ? (
-          <Heading style={{ marginTop: "30px" }}>No User Found...</Heading>
+          <Heading style={{ marginTop: "30px" }}>No User Found.</Heading>
         ) : (
           <>
             <Heading style={{ marginTop: "30px" }}>

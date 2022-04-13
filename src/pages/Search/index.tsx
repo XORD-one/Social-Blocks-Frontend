@@ -114,11 +114,11 @@ export default function Home() {
       <Header isSearchPage={true} setSearchValue={setSearchValue} />
       <MainDiv>
         {!loading && searchValue === "" ? (
-          <Heading style={{ marginTop: "30px" }}>Search Users...</Heading>
+          <Heading style={{ marginTop: "30px" }}>Search Users.</Heading>
         ) : loading ? (
           getSkeleton()
         ) : searchedUsers.length === 0 ? (
-          <Heading style={{ marginTop: "30px" }}>No User Found...</Heading>
+          <Heading style={{ marginTop: "30px" }}>No User Found.</Heading>
         ) : (
           searchedUsers.map((item, i) => (
             <Profile

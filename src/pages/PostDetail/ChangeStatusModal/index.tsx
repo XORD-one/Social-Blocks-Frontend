@@ -132,9 +132,13 @@ const Index: FC<any> = (props) => {
       <Heading>Change Status &#38; Price.</Heading>
       <br />
       <Label>Title :</Label>
-      <Heading style={{ textAlign: "left" }}>{props?.title}</Heading>
+      <Heading style={{ textAlign: "left", fontWeight: "700" }}>
+        {props?.title}
+      </Heading>
       <Label>Description :</Label>
-      <Heading style={{ textAlign: "left" }}>{props?.description}</Heading>
+      <Heading style={{ textAlign: "left", fontWeight: "700" }}>
+        {props?.description}
+      </Heading>
 
       <div style={{ width: "100%", height: "10px" }} />
       <Label>Status :</Label>

@@ -275,7 +275,7 @@ const PostDetail: FC = () => {
     if (info[1] == "0") {
       setBiddingPrice(postDetails?.sellValue / 10 ** 18);
     } else {
-      setBiddingPrice(info[1]);
+      setBiddingPrice(info[1] / 10 ** 18);
     }
 
     if (parseInt(info[0]) > postDetails.sellValue) {
@@ -374,20 +374,16 @@ const PostDetail: FC = () => {
     );
 
     if (status === "2") {
-      price = "0";
+      price = "1";
     }
 
-    if (
-      status != "" &&
-      status != postDetails.buyStatus &&
-      !isNaN(parseFloat(price)) &&
-      parseFloat(price) > 0
-    ) {
+    if (status != "" && !isNaN(parseFloat(price)) && parseFloat(price) > 0) {
       setStatusFormModalStatus(false);
       setStatusModalStatus(true);
 
       var date = new Date();
       date.setDate(date.getDate() + bidDuration);
+      console.log("aaa", price);
 
       contract.methods
         .changePostInfo(
@@ -462,6 +458,8 @@ const PostDetail: FC = () => {
     }
   };
 
+  const claimBid = async () => {};
+
   useEffect(() => {
     setPostId(window.location.href.split("/")[4]);
   }, []);
@@ -495,7 +493,9 @@ const PostDetail: FC = () => {
               PostId#{postId}
             </Heading>
             <PostContent src={postDetails?.image} />
-            <Heading style={{ marginTop: "10px" }}>{postDetails?.name}</Heading>
+            <Heading style={{ marginTop: "10px", fontWeight: "700" }}>
+              {postDetails?.name}
+            </Heading>
             <Heading style={{ fontSize: "20px" }}>
               "{postDetails?.description}"
             </Heading>
@@ -526,7 +526,14 @@ const PostDetail: FC = () => {
             {postDetails?.owner?.address === account?.toLowerCase() ? (
               <>
                 <Heading style={{ marginBottom: "0px", marginTop: "30px" }}>
-                  Reward : {claimableAmount}
+                  Reward :&nbsp;
+                  <span
+                    style={{ fontWeight: "700", cursor: "pointer" }}
+                    title={claimableAmount + " Social Blocks Token"}
+                  >
+                    {claimableAmount + " "}
+                    &nbsp;SBT
+                  </span>
                 </Heading>
                 <Button
                   onClick={() => claimReward()}
@@ -739,7 +746,14 @@ const PostDetail: FC = () => {
                     </>
                   ) : Math.floor(Date.now() / 1000) >
                     parseInt(biddingTimestamp) ? (
-                    <Button style={{ marginTop: "25px" }}>Claim Bid</Button>
+                    <Button
+                      style={{ marginTop: "25px" }}
+                      onClick={() => {
+                        claimBid();
+                      }}
+                    >
+                      Claim Bid
+                    </Button>
                   ) : null}
                 </>
               ) : (

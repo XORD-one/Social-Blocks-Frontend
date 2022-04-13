@@ -73,7 +73,7 @@ const PostDescription = styled("div")(({ theme }) => ({
   margin: "0px 15px",
   cursor: "pointer",
   marginBottom: "10px",
-  wordBreak: "break-all",
+  wordBreak: "break-word",
 }));
 
 const PostContent = styled("img")(({ theme }) => ({
