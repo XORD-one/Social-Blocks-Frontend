@@ -232,6 +232,7 @@ const PostDetail: FC = () => {
   const [statusModalStatus, setStatusModalStatus] = useState(false);
   const [biddingModalStatus, setBiddingModalStatus] = useState(false);
   const [claimingBidModalStatus, setClaimingBidModalStatus] = useState(false);
+  const [fetchData, setFetchData] = useState<boolean>(false);
 
   const [postId, setPostId] = useState('');
   const [postDetails, setPostDetails] = useState<any>(null);
@@ -242,6 +243,9 @@ const PostDetail: FC = () => {
   const signature = useAppSelector(state => state.userReducer.signature);
   const walletAddress = useAppSelector(
     state => state.userReducer.walletAddress,
+  );
+  const changesModalVisible = useAppSelector(
+    state => state.userReducer.changesModalVisible,
   );
   const navigate = useNavigate();
   const { account, activate } = useWeb3React();
@@ -270,9 +274,11 @@ const PostDetail: FC = () => {
       const transferResult = await axios.get(
         'https://socialblocks.herokuapp.com/posts/getTransferHistory/' + postId,
       );
-      setPostDetails(result?.data?._doc);
+      setPostDetails({ ...result?.data?._doc });
       setTransferHistory(transferResult?.data?.usersInOrder);
       setLikes(result?.data?.likesArray);
+
+      dispatch({ type: 'SET_CHANGES_MODAL_VISIBLE', payload: false });
     }
   };
 
@@ -555,6 +561,12 @@ const PostDetail: FC = () => {
   }, [postId]);
 
   useEffect(() => {
+    if (fetchData) {
+      getPostDetails();
+    }
+  }, [fetchData]);
+
+  useEffect(() => {
     if (postDetails?.buyStatus === 1) {
       getBiddingDetails();
     }
@@ -565,6 +577,14 @@ const PostDetail: FC = () => {
       getClaimableAmount();
     }
   }, [likes]);
+
+  useEffect(() => {
+    if (changesModalVisible) {
+      setTimeout(() => {
+        setFetchData(true);
+      }, 20000);
+    }
+  }, [changesModalVisible]);
 
   return (
     <Body>

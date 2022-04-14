@@ -17,6 +17,7 @@ import PostSkeleton from '../../components/Skeletons/PostSkeleton';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../hooks';
 import { injected } from '../../utils/connector';
+import { useDispatch } from 'react-redux';
 
 const Body = styled('div')(({ theme }) => ({
   width: '100vw',
@@ -145,6 +146,7 @@ export default function LetterAvatars() {
   const [ownedPostsLoading, setOwnedPostsLoading] = useState(true);
   const [postType, setPostType] = useState<string>('owned');
   const [followStatus, setFollowStatus] = useState<boolean>(false);
+  const [fetchData, setFetchData] = useState<boolean>(false);
 
   const [likes, setLikes] = useState(100);
 
@@ -160,6 +162,11 @@ export default function LetterAvatars() {
   const walletAddress = useAppSelector(
     state => state.userReducer.walletAddress,
   );
+  const changesModalVisible = useAppSelector(
+    state => state.userReducer.changesModalVisible,
+  );
+
+  const dispatch = useDispatch();
 
   const getCreatedPosts = async () => {
     const result = await axios.get(
@@ -189,7 +196,10 @@ export default function LetterAvatars() {
     const result = await axios.get(
       'https://socialblocks.herokuapp.com/users/details?address=' + address,
     );
-    setUser(result.data);
+
+    dispatch({ type: 'SET_CHANGES_MODAL_VISIBLE', payload: false });
+
+    setUser({ ...result.data });
     setTimeout(() => {
       setCreatedPostsLoading(false);
     }, 500);
@@ -208,10 +218,28 @@ export default function LetterAvatars() {
   }, [address]);
 
   useEffect(() => {
+    if (fetchData) {
+      getUserDetails();
+      getCreatedPosts();
+      getOwnedPosts();
+
+      setFetchData(false);
+    }
+  }, [fetchData]);
+
+  useEffect(() => {
     if (user?.followers?.includes(walletAddress?.toLowerCase())) {
       setFollowStatus(true);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (changesModalVisible) {
+      setTimeout(() => {
+        setFetchData(true);
+      }, 20000);
+    }
+  }, [changesModalVisible]);
 
   useEffect(() => {
     let count = 0;
