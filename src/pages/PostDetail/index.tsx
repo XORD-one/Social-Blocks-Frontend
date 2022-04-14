@@ -22,7 +22,6 @@ import { useTheme } from "@emotion/react";
 import { useMediaQuery } from "@mui/material";
 import IosShareIcon from "@mui/icons-material/IosShare";
 import { injected } from "../../utils/connector";
-import { useDispatch } from "react-redux";
 
 const Body = styled("div")(({ theme }) => ({
   width: "100vw",
@@ -346,7 +345,7 @@ const PostDetail: FC = () => {
       let post_id = postId;
       setPostId("0");
       setPostId(post_id);
-    }, 18000);
+    }, 20000);
   };
 
   const buy = async () => {
@@ -370,11 +369,6 @@ const PostDetail: FC = () => {
       })
       .on("confirmation", async function (confirmationNumber) {
         if (confirmationNumber === 1) {
-<<<<<<< Updated upstream
-          dispatch({ type: 'SET_CHANGES_MODAL_VISIBLE', payload: true });
-          navigate(`/home`);
-=======
->>>>>>> Stashed changes
           setBuyModalStatus(false);
           reloadData();
         }
