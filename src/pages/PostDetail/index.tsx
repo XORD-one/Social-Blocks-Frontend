@@ -20,6 +20,7 @@ import ChangeStatusModal from "./ChangeStatusModal/index";
 import User from "../../components/User";
 import { useTheme } from "@emotion/react";
 import { useMediaQuery } from "@mui/material";
+import IosShareIcon from "@mui/icons-material/IosShare";
 
 const Body = styled("div")(({ theme }) => ({
   width: "100vw",
@@ -598,7 +599,7 @@ const PostDetail: FC = () => {
             </InfoContainer>
             {postDetails?.owner?.address === account?.toLowerCase() ? (
               <>
-                <Heading style={{ marginBottom: "0px", marginTop: "30px" }}>
+                <Heading style={{ marginBottom: "10px", marginTop: "30px" }}>
                   Reward :&nbsp;
                   <span
                     style={{ fontWeight: "700", cursor: "pointer" }}
@@ -608,6 +609,37 @@ const PostDetail: FC = () => {
                     &nbsp;SBT
                   </span>
                 </Heading>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <a
+                    href="https://rinkeby.etherscan.io/address/0xcfb6f890d0a605a3e0b767b0ce32fad25ec96de8"
+                    target={"_blank"}
+                    style={{
+                      fontWeight: "700",
+                      textDecoration: "none",
+                      //@ts-ignore
+                      color: theme.palette.text.primary,
+                    }}
+                    rel="noreferrer"
+                  >
+                    Social Blocks Token (SBT)
+                  </a>
+                  &nbsp;
+                  <IosShareIcon
+                    style={{ transform: "rotate(90deg)" }}
+                    onClick={() => {
+                      window.open(
+                        "https://rinkeby.etherscan.io/address/0xcfb6f890d0a605a3e0b767b0ce32fad25ec96de8",
+                        "_blank"
+                      );
+                    }}
+                  />
+                </div>
                 <Button
                   onClick={() => claimReward()}
                   style={{ marginTop: "25px" }}
@@ -848,16 +880,7 @@ const PostDetail: FC = () => {
                     >
                       Change Status &#38; Price
                     </Button>
-                  ) : (
-                    <Button
-                      style={{ marginTop: "25px" }}
-                      onClick={() => {
-                        buy();
-                      }}
-                    >
-                      Buy
-                    </Button>
-                  )}
+                  ) : null}
                 </>
               )
             }
