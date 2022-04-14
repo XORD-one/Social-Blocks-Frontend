@@ -163,7 +163,6 @@ const Index: FC = () => {
         async () => {
           await deactivate;
           setLoading(false);
-          navigate('/connect');
         },
       );
     } catch (error) {

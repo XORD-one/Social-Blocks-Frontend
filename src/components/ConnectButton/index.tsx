@@ -1,16 +1,20 @@
-import * as React from "react";
-import Button from "../Button/index";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import { useWeb3React } from "@web3-react/core";
-import { useNavigate } from "react-router-dom";
-import { conciseWalletAddress } from "../../utils/formattingFunctions";
-import { useTheme } from "@emotion/react";
-import { useMediaQuery } from "@mui/material";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
-import LogoutIcon from "@mui/icons-material/Logout";
+import * as React from 'react';
+import Button from '../Button/index';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import { useWeb3React } from '@web3-react/core';
+import { useNavigate } from 'react-router-dom';
+import { conciseWalletAddress } from '../../utils/formattingFunctions';
+import { useTheme } from '@emotion/react';
+import { useMediaQuery } from '@mui/material';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import LogoutIcon from '@mui/icons-material/Logout';
 
-export default function BasicMenu() {
+type Props = {
+  connectMetamask: () => any;
+};
+
+export default function ConnectButton(props: Props) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const { active, account, deactivate } = useWeb3React();
@@ -18,13 +22,14 @@ export default function BasicMenu() {
 
   const theme = useTheme();
   //@ts-ignore
-  const isMobile = useMediaQuery(theme?.breakpoints?.down("sm"));
+  const isMobile = useMediaQuery(theme?.breakpoints?.down('sm'));
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (active && account) {
       setAnchorEl(event.currentTarget);
     } else {
-      navigate("/connect");
+      console.log('conn -');
+      props.connectMetamask();
     }
   };
 
@@ -33,13 +38,13 @@ export default function BasicMenu() {
   };
 
   return (
-    <div style={{ width: "fit-content" }}>
-      <Button onClick={handleClick} style={{ margin: "0px" }}>
+    <div style={{ width: 'fit-content' }}>
+      <Button onClick={handleClick} style={{ margin: '0px' }}>
         {active && account
           ? conciseWalletAddress(account)
           : isMobile
-          ? "Connect"
-          : "Connect Wallet"}
+          ? 'Connect'
+          : 'Connect Wallet'}
       </Button>
       <Menu
         id="basic-menu"
@@ -47,15 +52,13 @@ export default function BasicMenu() {
         open={open}
         onClose={handleClose}
         MenuListProps={{
-          "aria-labelledby": "basic-button",
-        }}
-      >
+          'aria-labelledby': 'basic-button',
+        }}>
         <MenuItem
           onClick={() => {
             navigate(`/profile/${account}`);
           }}
-          sx={{ fontSize: "25px", fontFamily: "Montserrat" }}
-        >
+          sx={{ fontSize: '25px', fontFamily: 'Montserrat' }}>
           <AccountBoxIcon />
           &nbsp; Profile
         </MenuItem>
@@ -65,8 +68,7 @@ export default function BasicMenu() {
             deactivate();
             navigate(`/home`);
           }}
-          sx={{ fontSize: "25px", fontFamily: "Montserrat" }}
-        >
+          sx={{ fontSize: '25px', fontFamily: 'Montserrat' }}>
           <LogoutIcon />
           &nbsp; Disconnet
         </MenuItem>
