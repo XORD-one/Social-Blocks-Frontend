@@ -196,7 +196,7 @@ const Index = () => {
 
   return (
     <div>
-      <CustomModal open={true} handleClose={() => {}}>
+      {/* <CustomModal open={true} handleClose={() => {}}>
         <div
           style={{
             display: 'flex',
@@ -217,7 +217,7 @@ const Index = () => {
           onClick={() => {}}>
           Close
         </Button>
-      </CustomModal>
+      </CustomModal> */}
       {active ? ConnectedRoutes() : NotConnectedRoutes()}
     </div>
   );
