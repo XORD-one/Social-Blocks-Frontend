@@ -1,7 +1,6 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { styled } from "@mui/system";
-import { alpha } from "@mui/material";
+import { styled, alpha } from "@mui/system";
 import { FC, useEffect, useState } from "react";
 import Button from "../../components/Button";
 import Header from "../../components/Header/index";
@@ -18,6 +17,9 @@ import Web3 from "web3";
 import { CONTRACT_ADDRESS } from "../../contract/constants";
 import contractAbi from "../../contract/contractAbi.json";
 import ChangeStatusModal from "./ChangeStatusModal/index";
+import User from "../../components/User";
+import { useTheme } from "@emotion/react";
+import { useMediaQuery } from "@mui/material";
 
 const Body = styled("div")(({ theme }) => ({
   width: "100vw",
@@ -161,6 +163,25 @@ const TextArea = styled("textarea")(({ theme }) => ({
   },
 }));
 
+const HorizontalSlider = styled("div")(({ theme }) => ({
+  width: "100%",
+  display: "flex",
+  overflowX: "auto",
+  alignItems: "center",
+
+  "::-webkit-scrollbar": {
+    height: "8px",
+    //@ts-ignore
+    background: alpha(theme.palette.primary.main, 0.1),
+  },
+
+  "::-webkit-scrollbar-thumb": {
+    borderRadius: "5px",
+    //@ts-ignore
+    background: theme.palette.primary.main,
+  },
+}));
+
 const CommentBody = styled("div")(({ theme }) => ({
   padding: "5px 10px",
   margin: "7px 0px",
@@ -184,6 +205,19 @@ const CommentUser = styled("div")(({ theme }) => ({
   cursor: "pointer",
 }));
 
+const Ring = styled("div")(({ theme }) => ({
+  height: "25px",
+  width: "25px",
+  borderRadius: "100%",
+  border: "solid 4px " + alpha(theme.palette.text.primary, 0.5),
+}));
+
+const HorizontalDivider = styled("div")(({ theme }) => ({
+  height: "4px",
+  width: "50px",
+  backgroundColor: alpha(theme.palette.text.primary, 0.5),
+}));
+
 const PostDetail: FC = () => {
   const [commentStatus, setCommentStatus] = useState(false);
   const [commentingModalStatus, setCommentingModalStatus] = useState(false);
@@ -197,6 +231,8 @@ const PostDetail: FC = () => {
   const [postId, setPostId] = useState("");
   const [postDetails, setPostDetails] = useState<any>(null);
   const [comments, setComments] = useState<any[]>([]);
+  const [transferHistory, setTransferHistory] = useState<any[]>([]);
+
   const [commentText, setCommentText] = useState<string>("");
   const signature = useAppSelector((state) => state.userReducer.signature);
   const walletAddress = useAppSelector(
@@ -208,7 +244,7 @@ const PostDetail: FC = () => {
 
   const [likes, setLikes] = useState<any[]>([]);
   const [biddingTimestamp, setBiddingTimestamp] = useState<any>();
-  const [biddingDate, setBiddingDate] = useState<string>("---");
+  const [biddingDate, setBiddingDate] = useState<Date>();
   const [biddingPrice, setBiddingPrice] = useState<any>("---");
   const [biddingAddress, setBiddingAddress] = useState<string>("---");
 
@@ -216,12 +252,20 @@ const PostDetail: FC = () => {
 
   const [bidAmmount, setBidAmount] = useState(0);
 
+  const theme = useTheme();
+  //@ts-ignore
+  const isMobile = useMediaQuery(theme?.breakpoints?.down("sm"));
+
   const getPostDetails = async () => {
     if (postId !== "") {
       const result = await axios.get(
         "https://socialblocks.herokuapp.com/posts/getSinglePost/" + postId
       );
+      const transferResult = await axios.get(
+        "https://socialblocks.herokuapp.com/posts/getTransferHistory/" + postId
+      );
       setPostDetails(result?.data?._doc);
+      setTransferHistory(transferResult?.data?.usersInOrder);
       setLikes(result?.data?.likesArray);
     }
   };
@@ -271,8 +315,7 @@ const PostDetail: FC = () => {
     );
     const info = await contract.methods.getLastBidInfoById(postId).call();
     let date = new Date(info[2] * 1000);
-    let dateArr = date.toDateString().split(" ");
-    setBiddingDate(dateArr[2] + " " + dateArr[1] + " " + dateArr[3]);
+    setBiddingDate(date);
     if (info[1] == "0") {
       setBiddingPrice(postDetails?.sellValue / 10 ** 18);
     } else {
@@ -615,7 +658,6 @@ const PostDetail: FC = () => {
                 ? "Biddable."
                 : "Not for sale."}
             </Heading>
-
             {
               // buy status is buyable
               postDetails?.buyStatus === 0 ? (
@@ -681,12 +723,17 @@ const PostDetail: FC = () => {
                   <Heading
                     style={{
                       textAlign: "left",
-                      fontSize: "40px",
+                      fontSize: "33px",
                       marginTop: "0px",
                       fontWeight: "400",
                     }}
                   >
-                    &#8226; {biddingDate}
+                    &#8226; {biddingDate?.toDateString()}
+                    {isMobile ? <br /> : <>&nbsp;</>}
+                    (&nbsp;
+                    {biddingDate?.getHours() + "h : "}
+                    {biddingDate?.getHours() + "m : "}
+                    {biddingDate?.getSeconds() + "s"}&nbsp;)
                   </Heading>
                   <Heading
                     style={{
@@ -814,6 +861,47 @@ const PostDetail: FC = () => {
                 </>
               )
             }
+            <br />
+            <Heading
+              style={{
+                marginTop: "10px",
+                textAlign: "left",
+                marginBottom: "0px",
+              }}
+            >
+              Transfer history :
+            </Heading>
+            <HorizontalSlider>
+              <div>
+                <Ring />
+              </div>
+
+              <div>
+                <HorizontalDivider />
+              </div>
+
+              {transferHistory.map((e) => {
+                return (
+                  <>
+                    <User
+                      userName={e?.userName}
+                      displayName={e?.displayName}
+                      image={e?.image}
+                      address={e?.address}
+                    />
+                    <div>
+                      <HorizontalDivider />
+                    </div>
+                  </>
+                );
+              })}
+
+              <div>
+                <Ring />
+              </div>
+            </HorizontalSlider>
+            <br />
+
             <div style={{ display: "flex", alignItems: "center" }}>
               <Heading
                 style={{
@@ -860,7 +948,6 @@ const PostDetail: FC = () => {
                 </Button>
               </>
             ) : null}
-
             {comments.length > 0 ? (
               comments.map((comment, i) => {
                 return (
@@ -888,7 +975,6 @@ const PostDetail: FC = () => {
                 &#8226; No Comments.
               </Heading>
             )}
-
             <CustomModal open={commentingModalStatus} handleClose={() => {}}>
               <Loader />
               <br /> <br />
