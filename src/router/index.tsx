@@ -138,7 +138,7 @@ const NotConnectedRoutes = () => {
 };
 
 const Index = () => {
-  const { account, library, active } = useWeb3React();
+  const { account, library, active, chainId, deactivate } = useWeb3React();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -204,6 +204,16 @@ const Index = () => {
       redirect();
     }
   }, [account, instance, active, library]);
+
+  useEffect(() => {
+    if (chainId && chainId !== 4) {
+      console.log("chainId : ", chainId);
+      deactivate();
+      alert(
+        `Warning:\nYou are connected to wrong network please connect to "Rinkeby Test Network".`
+      );
+    }
+  }, [account, active, chainId]);
 
   return <div>{active ? ConnectedRoutes() : NotConnectedRoutes()}</div>;
 };
