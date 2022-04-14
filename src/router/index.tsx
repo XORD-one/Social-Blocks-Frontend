@@ -211,7 +211,10 @@ const Index = () => {
 
   useEffect(() => {
     if (changesModalVisible) {
+      console.log("set timeput");
+
       setTimeout(() => {
+        console.log("this timeoute called");
         forceUpdate();
         dispatch({ type: "SET_CHANGES_MODAL_VISIBLE", payload: false });
       }, 15000);
