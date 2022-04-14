@@ -365,8 +365,8 @@ const PostDetail: FC = () => {
       })
       .on('confirmation', async function (confirmationNumber) {
         if (confirmationNumber === 1) {
-          // navigate(`/profile/${account}`);
-          forceUpdate();
+          dispatch({ type: 'SET_CHANGES_MODAL_VISIBLE', payload: true });
+          navigate(`/home`);
           setBuyModalStatus(false);
         }
       })

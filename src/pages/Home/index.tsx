@@ -11,6 +11,7 @@ import { useAppSelector } from '../../hooks';
 import PostSkeleton from '../../components/Skeletons/PostSkeleton';
 import { useWeb3React } from '@web3-react/core';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 const Body = styled('div')(({ theme }) => ({
   width: '100vw',
@@ -74,8 +75,15 @@ const getSkeleton = () => {
 export default function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [posts, setPosts] = useState<SinglePost[]>([]);
+  const [fetchData, setFetchData] = useState<boolean>(false);
   const { account } = useWeb3React();
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
+  const changesModalVisible = useAppSelector(
+    state => state.userReducer.changesModalVisible,
+  );
 
   const getPosts = async () => {
     setLoading(true);
@@ -85,6 +93,9 @@ export default function Home() {
     }).then(response => {
       if (response?.data) {
         setPosts(response.data.sort((a, b) => Number(b._id) - Number(a._id)));
+
+        dispatch({ type: 'SET_CHANGES_MODAL_VISIBLE', payload: false });
+
         setTimeout(() => {
           setLoading(false);
         }, 1000);
@@ -95,6 +106,26 @@ export default function Home() {
   useEffect(() => {
     getPosts();
   }, []);
+
+  useEffect(() => {
+    if (fetchData) {
+      console.log('fetching data again');
+
+      getPosts();
+
+      setFetchData(false);
+    }
+  }, [fetchData]);
+
+  useEffect(() => {
+    if (changesModalVisible) {
+      console.log('timeout set');
+
+      setTimeout(() => {
+        setFetchData(true);
+      }, 20000);
+    }
+  }, [changesModalVisible]);
 
   return (
     <Body>
