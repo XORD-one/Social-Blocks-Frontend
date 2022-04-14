@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useReducer, useState } from 'react';
 import { useRoutes, Navigate, useNavigate } from 'react-router-dom';
 import Home from '../pages/Home';
 import ConnectWallet from '../pages/ConnectWallet';
@@ -130,8 +130,12 @@ const Index = () => {
   const { account, library, active } = useWeb3React();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [_, forceUpdate] = useReducer(x => x + 1, 0);
 
   const instance = useAppSelector(state => state.contractReducer.instance);
+  const changesModalVisible = useAppSelector(
+    state => state.userReducer.changesModalVisible,
+  );
 
   const getSignature = async () => {
     if (library && account && active) {
@@ -158,14 +162,14 @@ const Index = () => {
   };
 
   const redirect = async () => {
-    let signedMessage = await getSignature();
-
-    if (signedMessage && account && instance && active) {
+    if (account && instance && active) {
       const username = await isAddressReserved(account);
 
       if (!username) {
         navigate('/register');
       } else {
+        await getSignature();
+
         dispatch({
           type: 'SET_USER',
           payload: {
@@ -194,9 +198,17 @@ const Index = () => {
     }
   }, [account, instance, active, library]);
 
+  useEffect(() => {
+    if (changesModalVisible) {
+      setTimeout(() => {
+        forceUpdate();
+      }, 15000);
+    }
+  }, [changesModalVisible]);
+
   return (
     <div>
-      {/* <CustomModal open={true} handleClose={() => {}}>
+      <CustomModal open={changesModalVisible} handleClose={() => {}}>
         <div
           style={{
             display: 'flex',
@@ -206,7 +218,7 @@ const Index = () => {
             marginTop: 100,
           }}>
           <FeedbackOutlinedIcon style={{ height: 100, width: 100 }} />
-          <p>Changes will take 30 seconds to reflect</p>
+          <p>Changes will take 15 seconds to reflect</p>
         </div>
         <Button
           style={{
@@ -214,10 +226,12 @@ const Index = () => {
             marginTop: 'auto',
             marginBottom: 20,
           }}
-          onClick={() => {}}>
+          onClick={() =>
+            dispatch({ type: 'SET_CHANGES_MODAL_VISIBLE', payload: false })
+          }>
           Close
         </Button>
-      </CustomModal> */}
+      </CustomModal>
       {active ? ConnectedRoutes() : NotConnectedRoutes()}
     </div>
   );

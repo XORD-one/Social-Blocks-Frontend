@@ -8,6 +8,7 @@ type StateType = {
   username: string | null;
   displayName: string | null;
   signature: string | null;
+  changesModalVisible: boolean;
 };
 
 const initState: StateType = {
@@ -15,6 +16,7 @@ const initState: StateType = {
   username: null,
   displayName: null,
   signature: null,
+  changesModalVisible: false,
 };
 
 const userReducer = (
@@ -37,6 +39,11 @@ const userReducer = (
       return {
         ...state,
         signature: action.payload,
+      };
+    case 'SET_CHANGES_MODAL_VISIBLE':
+      return {
+        ...state,
+        changesModalVisible: action.payload,
       };
   }
 

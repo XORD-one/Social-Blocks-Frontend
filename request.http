@@ -11,3 +11,7 @@ Content-Type: application/json
 {
     "address": "0x5acca90b4e5cf2d283cd0b5bff9dc1cea51e0bf0"
 }
+
+###
+
+GET https://socialblocks.herokuapp.com/posts/getPosts/23

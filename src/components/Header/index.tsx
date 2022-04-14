@@ -76,15 +76,7 @@ export default function HeaderComponent(props) {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTab = useMediaQuery(theme.breakpoints.down('smd'));
 
-  const { activate, account, library, active, deactivate } = useWeb3React();
-  const dispatch = useDispatch();
-
-  const instance = useAppSelector(state => state.contractReducer.instance);
-  const signature = useAppSelector(state => state.userReducer.signature);
-
-  useEffect(() => {
-    deactivate();
-  }, []);
+  const { activate, deactivate } = useWeb3React();
 
   const activateMetamaskWallet = async () => {
     try {

@@ -22,6 +22,7 @@ import { useTheme } from '@emotion/react';
 import { useMediaQuery } from '@mui/material';
 import IosShareIcon from '@mui/icons-material/IosShare';
 import { injected } from '../../utils/connector';
+import { useDispatch } from 'react-redux';
 
 const Body = styled('div')(({ theme }) => ({
   width: '100vw',
@@ -243,6 +244,7 @@ const PostDetail: FC = () => {
   const navigate = useNavigate();
   const { account, activate } = useWeb3React();
   const web3Context = useWeb3React();
+  const dispatch = useDispatch();
 
   const [likes, setLikes] = useState<any[]>([]);
   const [biddingTimestamp, setBiddingTimestamp] = useState<any>();
@@ -449,6 +451,7 @@ const PostDetail: FC = () => {
             let id = postId;
             setPostId('0');
             setPostId(id);
+            dispatch({ type: 'SET_CHANGES_MODAL_VISIBLE', payload: true });
           }
         })
         .on('error', async function (error) {
