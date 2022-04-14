@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { styled, alpha } from '@mui/system';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useReducer, useState } from 'react';
 import Button from '../../components/Button';
 import Header from '../../components/Header/index';
 import Profile from '../../components/Profile/index';
@@ -222,6 +222,8 @@ const HorizontalDivider = styled('div')(({ theme }) => ({
 }));
 
 const PostDetail: FC = () => {
+  const [_, forceUpdate] = useReducer(x => x + 1, 0);
+
   const [commentStatus, setCommentStatus] = useState(false);
   const [commentingModalStatus, setCommentingModalStatus] = useState(false);
   const [buyModalStatus, setBuyModalStatus] = useState(false);
@@ -357,7 +359,8 @@ const PostDetail: FC = () => {
       })
       .on('confirmation', async function (confirmationNumber) {
         if (confirmationNumber === 1) {
-          navigate(`/profile/${account}`);
+          // navigate(`/profile/${account}`);
+          forceUpdate();
           setBuyModalStatus(false);
         }
       })
@@ -402,6 +405,7 @@ const PostDetail: FC = () => {
         .on('confirmation', confirmationNumber => {
           if (confirmationNumber === 1) {
             console.log('confirmationNumber =', confirmationNumber);
+            forceUpdate();
             setClaimModalStatus(false);
           }
         })
@@ -530,6 +534,7 @@ const PostDetail: FC = () => {
       })
       .on('confirmation', async function (confirmationNumber) {
         if (confirmationNumber === 1) {
+          forceUpdate();
           setClaimingBidModalStatus(false);
         }
       })
