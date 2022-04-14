@@ -9,6 +9,7 @@ import { updateAccount } from "../../../../utils/contractMethods";
 import CustomModal from "../../../../components/CustomModal";
 import Loader from "../../../../components/Loader";
 import { useAppSelector } from "../../../../hooks";
+import { useDispatch } from "react-redux";
 
 const Container = styled("div")(({ theme }) => ({
   width: "100%",
@@ -105,7 +106,7 @@ const Index: FC<Prop> = (props) => {
   const [image] = useState(props.image);
   const [displayName, setDisplayName] = useState(props.displayName);
   const [bio, setBio] = useState(props.bio);
-
+  const dispatch = useDispatch();
   const [loading, setLoading] = useState<boolean>(false);
 
   const navigate = useNavigate();
@@ -144,6 +145,7 @@ const Index: FC<Prop> = (props) => {
         walletAddress!,
         () => {
           setLoading(false);
+          dispatch({ type: "SET_CHANGES_MODAL_VISIBLE", payload: true });
           navigate(`/profile/${walletAddress!.toLowerCase()}`);
         }
       );
