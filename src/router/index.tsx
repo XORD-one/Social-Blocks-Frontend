@@ -127,7 +127,7 @@ const NotConnectedRoutes = () => {
 };
 
 const Index = () => {
-  const { account, deactivate, library, active } = useWeb3React();
+  const { account, library, active } = useWeb3React();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -135,7 +135,7 @@ const Index = () => {
 
   const getSignature = async () => {
     if (library && account && active) {
-      const timeConstant = 3600;
+      const timeConstant = 86400;
 
       const time = Math.floor(Math.floor(Date.now() / 1000) / timeConstant);
       const hash = keccak256(time.toString()).toString('hex');
@@ -196,11 +196,28 @@ const Index = () => {
 
   return (
     <div>
-      {/* <CustomModal open={true} handleClose={() => {}}>
-        <FeedbackOutlinedIcon height={100} width={100} />
-        <p>Changes will take 30 seconds to reflect</p>
-        <Button onClick={() => {}}>Close</Button>
-      </CustomModal> */}
+      <CustomModal open={true} handleClose={() => {}}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 100,
+          }}>
+          <FeedbackOutlinedIcon style={{ height: 100, width: 100 }} />
+          <p>Changes will take 30 seconds to reflect</p>
+        </div>
+        <Button
+          style={{
+            width: '90%',
+            marginTop: 'auto',
+            marginBottom: 20,
+          }}
+          onClick={() => {}}>
+          Close
+        </Button>
+      </CustomModal>
       {active ? ConnectedRoutes() : NotConnectedRoutes()}
     </div>
   );
