@@ -18,6 +18,9 @@ import Web3 from 'web3';
 import { isAddressReserved } from '../utils/contractMethods';
 import keccak256 from 'keccak256';
 import { useAppSelector } from '../hooks';
+import CustomModal from '../components/CustomModal';
+import Button from '../components/Button';
+import FeedbackOutlinedIcon from '@mui/icons-material/FeedbackOutlined';
 
 const ConnectedRoutes = () => {
   return useRoutes([
@@ -191,7 +194,16 @@ const Index = () => {
     }
   }, [account, instance, active, library]);
 
-  return active ? ConnectedRoutes() : NotConnectedRoutes();
+  return (
+    <div>
+      {/* <CustomModal open={true} handleClose={() => {}}>
+        <FeedbackOutlinedIcon height={100} width={100} />
+        <p>Changes will take 30 seconds to reflect</p>
+        <Button onClick={() => {}}>Close</Button>
+      </CustomModal> */}
+      {active ? ConnectedRoutes() : NotConnectedRoutes()}
+    </div>
+  );
 };
 
 export default Index;
