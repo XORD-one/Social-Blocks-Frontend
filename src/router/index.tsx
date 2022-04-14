@@ -217,7 +217,7 @@ const Index = () => {
         }>
         <Loader />
         <br /> <br />
-        <Heading>Changes will take 15s to Reflect. Please Wait.</Heading>
+        <Heading>Changes will take 10-15s to Reflect.</Heading>
         <Button
           style={{
             width: '90%',
