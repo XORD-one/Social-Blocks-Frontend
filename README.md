@@ -6,8 +6,13 @@ The main purpose of our application is to create a decentralized platform where 
 
 ## Project Code Links:
 Server: 
-https://github.com/XORD-one/Social-Blocks-Server 
+```
+https://github.com/XORD-one/Social-Blocks-Server
+```
 Smart Contract: 
-https://github.com/XORD-one/Social-Blocks-Smart-Contracts 
-Subgraph: 
+```
+https://github.com/XORD-one/Social-Blocks-Smart-Contracts
+```
+Subgraph:
+```
 https://github.com/Ijlal-Ishaq/Social-Blocks-Subgraph
